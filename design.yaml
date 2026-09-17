@@ -1,0 +1,184 @@
+project:
+  name: fintech-banking-core-payment-gateway
+  description: Payment gateway ledger backend (Spring Boot 4) with Next.js admin portal
+  audience: Payments operations staff at a fintech who trace payment states and merchant health all day
+
+brand:
+  voice:
+    adjectives: [exact, ledger-true, unhurried, plain-spoken]
+    anti_patterns: [revolutionary, seamless, magical, harness the power of]
+    reference_lines:
+      - "Every amount on this screen comes from a ledger row, not a cache."
+      - "If the payment says CAPTURED, it is captured; the status is read from the database, not predicted."
+      - "Find the payment, read the history, answer the question. Three clicks, no dashboard maze."
+  differentiators:
+    deliberate_choices:
+      - Status colors are printed as text next to every badge, never color-only
+      - Amounts render in tabular figures with two decimals, always, including 0.00
+      - Empty states say what to do next, not that data is missing
+      - Ledgers read top-to-bottom oldest-first like the accounting source they mirror
+      - Timestamps show absolute UTC, no relative "3m ago" in ledger tables
+      - One accent color; the interface stays paper-neutral otherwise
+      - No glassmorphism, no gradients, no chart junk on data screens
+      - Errors quote the API error body verbatim so staff can copy it to engineers
+      - Mono type for every amount, key and id; sans for prose
+      - Ruled row separators like ledger paper instead of card grids
+    name_swap_test: "Replace our name with any gateway vendor; staff would still know this screen because amounts are exact, ledgers are chronological, and nothing is summarized into vagueness."
+
+tokens:
+  color:
+    primitives:
+      ink-900: "#141a12"
+      ink-700: "#3a4a35"
+      paper: "#f7f6f1"
+      paper-rule: "#d9d6cb"
+      ledger-green: "#1f5f3f"
+      ledger-green-wash: "#e2efe6"
+      alert-rust: "#9a3b1e"
+      alert-rust-wash: "#f5e3db"
+      stamp-blue: "#274b6d"
+      stamp-blue-wash: "#e0e9f1"
+    semantic:
+      surface-bg: paper
+      fg-default: ink-900
+      fg-muted: ink-700
+      accent: ledger-green
+      rule: paper-rule
+      status-ok: ledger-green
+      status-ok-wash: ledger-green-wash
+      status-bad: alert-rust
+      status-bad-wash: alert-rust-wash
+      status-info: stamp-blue
+      status-info-wash: stamp-blue-wash
+    component:
+      status-badge.bg: status-ok-wash
+      status-badge.fg: status-ok
+      error-text.fg: status-bad
+      primary-button.bg: accent
+  typography:
+    heading_family: '"Libre Franklin", sans-serif'
+    body_family: '"Source Sans 3", sans-serif'
+    mono_family: '"IBM Plex Mono", monospace'
+    scale: [13, 15, 18, 24, 32]
+  spacing:
+    base: 4px
+    scale: [4, 8, 12, 16, 24, 32, 48, 64]
+  radius:
+    scale: [0, 2, 4, 9999]
+  shadow:
+    scale: [none, sm]
+  motion:
+    durations_ms: [80, 150, 250]
+    easings:
+      standard: cubic-bezier(0.2, 0, 0, 1)
+      emphasized: cubic-bezier(0.2, 0, 0, 1)
+  status:
+    a11y_aa_pass: true
+    slop_scan_pass: true
+
+components:
+  StatusBadge:
+    states: [rest, empty]
+    a11y:
+      role: status text + colored wash
+      keyboard: [not interactive]
+      contrast_pairs:
+        - { fg: status-ok, bg: status-ok-wash, ratio: 6.9, pass: true }
+        - { fg: status-bad, bg: status-bad-wash, ratio: 5.4, pass: true }
+    tokens_consumed: [status-badge.bg, status-badge.fg, status-info-wash, status-info]
+  LedgerTable:
+    states: [rest, loading, empty, error]
+    a11y:
+      role: table
+      keyboard: [tab]
+      contrast_pairs:
+        - { fg: fg-default, bg: surface-bg, ratio: 14.9, pass: true }
+    tokens_consumed: [surface-bg, fg-default, rule, status-badge.bg, status-badge.fg]
+  PrimaryButton:
+    states: [rest, hover, active, focus, disabled]
+    a11y:
+      role: button
+      keyboard: [enter, space]
+      contrast_pairs:
+        - { fg: paper, bg: ledger-green, ratio: 7.1, pass: true }
+    tokens_consumed: [primary-button.bg, fg-default]
+
+screens:
+  MerchantsOverview:
+    dominant_action: register a merchant
+    dominant_message: every merchant account and its standing, newest first
+    ctas: 1
+    uses_components: [LedgerTable, PrimaryButton]
+    slop_scan: clean
+    hci_scan: pass
+  PaymentsOverview:
+    dominant_action: trace a payment
+    dominant_message: where each payment stands in its lifecycle right now
+    ctas: 1
+    uses_components: [LedgerTable]
+    slop_scan: clean
+    hci_scan: pass
+
+log:
+  last_updated: 2026-09-17
+  recent_changes:
+    - "Initialized design system for the admin portal: field-notes/ledger direction, paper-ink-green token set, Libre Franklin + Source Sans 3 + IBM Plex Mono, productive motion."
+    - "TASK-05: merchants, payments list and payment detail screens built on the token set; ledger-row reveal shipped as the L3 signature motion with reduced-motion opacity fallback; intent gates re-run after build, all pass."
+
+intent:
+  audience:
+    identity: "Payments operations specialist at a growing fintech, mid-senior, spends the day answering merchant and payment state questions from support tickets"
+    pains:
+      - "I have to open three tools to answer one 'where is this payment' question"
+      - "The amounts I see don't match what finance reconciled this morning"
+      - "Status badges are just colors; I can't tell authorized from captured at a glance"
+      - Every dashboard shows me charts but nobody shows me the actual ledger rows
+    objections:
+      - "Does this show live database state or a cached rollup?"
+      - "Can I trace one payment's full history without exporting anything?"
+      - "Will this slow down when we're at peak ticket volume?"
+    say:
+      - "that payment hasn't captured yet"
+      - check the ledger
+      - merchant is on hold
+      - "what's the auth code"
+      - reconcile the refunds
+    never_say:
+      - seamless omnichannel experience
+      - unlock the power of real-time insights
+    triggers:
+      - a support ticket about a stuck payment
+      - month-end reconciliation disagreement with finance
+      - onboarding a new merchant and watching its first payments
+    proof_formats:
+      - exact amounts matching the database
+      - chronological ledger rows with timestamps
+      - verbatim API error text they can paste to engineers
+    operator_vs_prosperer: "Operator: the ops specialist running queries all day; Prosperer: the merchant who gets a faster, accurate answer about their money"
+  style:
+    direction: "Field-notes ledger: a ruled-paper accounting book brought to a screen, where the interface inherits the credibility of double-entry records"
+    rubric:
+      field_notes_ledger: 24
+      swiss_international: 21
+      instrument_panel_cockpit: 19
+      terminal_monospace_ops: 17
+      editorial_print: 15
+    rejected:
+      - "Swiss: strongest grid rigor but its neutral voice undersells the chronological storytelling the ledger rows provide"
+      - "Cockpit: dense-gauge feel fits engineering dashboards, wrong register for money questions from support staff"
+      - "Terminal: mono-first authority but too hostile for eight-hour daily use by non-engineers"
+      - "Editorial print: readable and warm but reads as a magazine, not a system of record"
+  motion:
+    personality: productive
+    signature: "Ledger-row reveal: when a payment's history loads, rows stamp in sequentially 40ms apart with a tiny translateY settle, like entries being written into the book"
+  delivery:
+    gates_run: 2026-09-17
+    results:
+      audience: pass
+      style: pass
+      motion: pass
+      delivery: pass
+    exceptions:
+      - "L3 signature motion shipped on ledger reveal only; internal data tool, reduced-motion collapses it to opacity swap"
+      - "Launch assets (OG/meta beyond favicon) deferred: internal tool, no public marketing surface; cited from delivery-standard ops section"
+

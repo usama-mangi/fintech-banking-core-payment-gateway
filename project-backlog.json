@@ -41,7 +41,7 @@
     {
       "id": "TASK-05",
       "title": "Admin portal: connect to backend API (merchants and payments views)",
-      "status": "to-do",
+      "status": "closed",
       "dependencies": [
         "TASK-03"
       ],
@@ -76,8 +76,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T14:44:43.459042+00:00",
+    "last_updated": "2026-09-17T15:10:54.502221+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-05",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T15:10:54.502204+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-05",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T14:52:21.401944+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-04",
@@ -117,20 +131,6 @@
         "task": "TASK-07",
         "status": "to-do",
         "at": "2026-09-17T14:30:14.578699+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-02",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T14:30:14.496820+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-02",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T14:26:45.325935+00:00"
       }
     ]
   }

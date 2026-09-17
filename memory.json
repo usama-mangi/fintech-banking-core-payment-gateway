@@ -40,6 +40,11 @@
       "text": "TASK-04: ApiKeyAuthFilter (plain jakarta Filter via FilterRegistrationBean, /api/payments/* only, order 1). X-API-Key -> MerchantRepository.findByApiKey; unknown/missing -> 401, non-ACTIVE merchant -> 403, else authenticatedMerchantId request attribute consumed by PaymentController @RequestAttribute. Merchant/actuator endpoints stay open (MVP admin trust). Body merchantId != authenticated id -> 403. Filter JSON errors written via tools.jackson.databind.ObjectMapper (Jackson 3 moved from com.fasterxml in Boot 4). Cross-merchant READS intentionally allowed; revisit trigger documented in docs/plans/TASK-04.md.",
       "cat": "decision",
       "updated": "2026-09-17T14:44:43.545134+00:00"
+    },
+    "portal-wiring": {
+      "text": "Admin portal (TASK-05): server components fetch PAYMENT_API_BASE (default localhost:8080) with PAYMENT_API_KEY env for payment pages; merchant pages key-exempt. Next 15 searchParams/params are Promises in async pages. Fonts via next/font: Libre Franklin/Source Sans 3/IBM Plex Mono. Tailwind 4 tokens via @theme inline mapping CSS vars. Register form uses useActionState server action + revalidatePath. Walkthrough verified: register -> key -> payment -> authz -> capture -> detail ledger renders CAPTURED; 404 and error states render; intent.py scan 0 findings; gates PASS after build.",
+      "cat": "fact",
+      "updated": "2026-09-17T15:10:54.594855+00:00"
     }
   }
 }
