@@ -122,16 +122,16 @@
     {
       "id": "TASK-14",
       "title": "Scoped merchant auth: merchant keys read only their own data; internal key for ops",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-04"
       ],
-      "notes": ""
+      "notes": "Merchant keys forced to own data (list forced, detail 404 cross-merchant); INTERNAL_API_KEY internal tier; /api/fees internal-only; 49 tests"
     },
     {
       "id": "TASK-15",
       "title": "CSV export of payments (GET /api/payments/export)",
-      "status": "to-do",
+      "status": "active",
       "dependencies": [
         "TASK-14"
       ],
@@ -149,8 +149,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T19:15:38.411671+00:00",
+    "last_updated": "2026-09-17T19:29:07.631242+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-15",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T19:29:07.631224+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-14",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T19:29:07.517882+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-14",
@@ -189,19 +203,6 @@
         "task": "TASK-14",
         "status": "to-do",
         "at": "2026-09-17T19:10:14.159546+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-13",
-        "status": "to-do",
-        "at": "2026-09-17T19:10:14.060510+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-12",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T18:39:43.650604+00:00"
       }
     ]
   }

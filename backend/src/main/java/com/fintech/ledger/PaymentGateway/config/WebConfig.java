@@ -19,7 +19,7 @@ public class WebConfig {
 			org.springframework.core.env.Environment env) {
 		FilterRegistrationBean<ApiKeyAuthFilter> registration = new FilterRegistrationBean<>(
 				new ApiKeyAuthFilter(merchantRepository, env.getProperty("internal.api.key")));
-		registration.addUrlPatterns("/api/payments/*", "/api/fees");
+		registration.addUrlPatterns("/api/payments/*", "/api/payments/export", "/api/fees");
 		registration.setOrder(1);
 		return registration;
 	}
