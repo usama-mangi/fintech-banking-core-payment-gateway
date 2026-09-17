@@ -45,6 +45,16 @@ public class GlobalExceptionHandler {
 		return errorBody(HttpStatus.BAD_REQUEST, ex.getMessage());
 	}
 
+	@ExceptionHandler(ApiExceptions.UnauthorizedException.class)
+	public ResponseEntity<Map<String, Object>> handleUnauthorized(ApiExceptions.UnauthorizedException ex) {
+		return errorBody(HttpStatus.UNAUTHORIZED, ex.getMessage());
+	}
+
+	@ExceptionHandler(ApiExceptions.ForbiddenException.class)
+	public ResponseEntity<Map<String, Object>> handleForbidden(ApiExceptions.ForbiddenException ex) {
+		return errorBody(HttpStatus.FORBIDDEN, ex.getMessage());
+	}
+
 	@ExceptionHandler(ApiExceptions.ConflictException.class)
 	public ResponseEntity<Map<String, Object>> handleConflict(ApiExceptions.ConflictException ex) {
 		return errorBody(HttpStatus.CONFLICT, ex.getMessage());

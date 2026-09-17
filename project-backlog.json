@@ -32,7 +32,7 @@
     {
       "id": "TASK-04",
       "title": "API-key auth filter for merchant endpoints (X-API-Key)",
-      "status": "to-do",
+      "status": "closed",
       "dependencies": [
         "TASK-03"
       ],
@@ -76,8 +76,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T14:38:38.407370+00:00",
+    "last_updated": "2026-09-17T14:44:43.459042+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-04",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T14:44:43.459024+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-04",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T14:39:15.840790+00:00"
+      },
       {
         "action": "add",
         "task": "TASK-08",
@@ -117,20 +131,6 @@
         "old_status": "to-do",
         "new_status": "active",
         "at": "2026-09-17T14:26:45.325935+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-01",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T14:25:43.494257+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-01",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T14:20:15.468216+00:00"
       }
     ]
   }

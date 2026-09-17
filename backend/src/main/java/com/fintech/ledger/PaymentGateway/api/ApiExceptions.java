@@ -23,6 +23,20 @@ public final class ApiExceptions {
 		}
 	}
 
+	/** Missing or invalid credentials; handler maps to 401. */
+	public static class UnauthorizedException extends RuntimeException {
+		public UnauthorizedException(String message) {
+			super(message);
+		}
+	}
+
+	/** Valid credentials, insufficient rights; handler maps to 403. */
+	public static class ForbiddenException extends RuntimeException {
+		public ForbiddenException(String message) {
+			super(message);
+		}
+	}
+
 	/** Unique constraint violated (e.g. merchant email); handler maps to 409. */
 	public static class DuplicateEmailException extends RuntimeException {
 		public DuplicateEmailException(String message) {

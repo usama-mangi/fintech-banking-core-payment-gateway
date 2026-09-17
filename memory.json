@@ -35,6 +35,11 @@
       "text": "Payment.record() rejects illegal transitions (IllegalStateException -> 409 via GlobalExceptionHandler). FAILED transactions always recorded and set status FAILED regardless of current state. FEE type has no transition yet (TASK-08). Ledger rows persist ONLY through Payment's CascadeType.ALL: an extra transactionRepository.save() double-inserted rows and made capturedAmountInUsd report 140 instead of 70.",
       "cat": "decision",
       "updated": "2026-09-17T14:38:38.500609+00:00"
+    },
+    "auth-model": {
+      "text": "TASK-04: ApiKeyAuthFilter (plain jakarta Filter via FilterRegistrationBean, /api/payments/* only, order 1). X-API-Key -> MerchantRepository.findByApiKey; unknown/missing -> 401, non-ACTIVE merchant -> 403, else authenticatedMerchantId request attribute consumed by PaymentController @RequestAttribute. Merchant/actuator endpoints stay open (MVP admin trust). Body merchantId != authenticated id -> 403. Filter JSON errors written via tools.jackson.databind.ObjectMapper (Jackson 3 moved from com.fasterxml in Boot 4). Cross-merchant READS intentionally allowed; revisit trigger documented in docs/plans/TASK-04.md.",
+      "cat": "decision",
+      "updated": "2026-09-17T14:44:43.545134+00:00"
     }
   }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +32,7 @@ public class PaymentController {
 
 	@PostMapping
 	public ResponseEntity<PaymentDtos.PaymentSummary> create(
-			@RequestHeader(name = "Merchant-Id", required = false) Long merchantId,
+			@RequestAttribute(name = ApiKeyAuthFilter.MERCHANT_ATTRIBUTE, required = false) Long merchantId,
 			@Valid @RequestBody PaymentDtos.CreatePaymentRequest request) {
 		PaymentService.CreatedPayment result = paymentService.create(merchantId, request);
 		if (result.created()) {

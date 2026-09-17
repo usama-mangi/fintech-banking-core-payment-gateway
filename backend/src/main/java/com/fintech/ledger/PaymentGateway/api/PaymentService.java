@@ -36,10 +36,13 @@ public class PaymentService {
 	}
 
 	@Transactional
-	public CreatedPayment create(Long headerMerchantId, PaymentDtos.CreatePaymentRequest request) {
-		Long merchantId = request.merchantId() != null ? request.merchantId() : headerMerchantId;
+	public CreatedPayment create(Long authenticatedMerchantId, PaymentDtos.CreatePaymentRequest request) {
+		Long merchantId = authenticatedMerchantId;
+		if (request.merchantId() != null && !request.merchantId().equals(authenticatedMerchantId)) {
+			throw new ApiExceptions.ForbiddenException("merchantId in body does not match the authenticated merchant");
+		}
 		if (merchantId == null) {
-			throw new ApiExceptions.BadRequestException("merchant must be given via the Merchant-Id header or merchantId field");
+			throw new ApiExceptions.UnauthorizedException("missing or unknown API key");
 		}
 		Merchant merchant = merchantRepository.findById(merchantId)
 				.orElseThrow(() -> new ApiExceptions.NotFoundException("merchant " + merchantId + " not found"));
