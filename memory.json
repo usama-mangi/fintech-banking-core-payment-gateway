@@ -45,6 +45,11 @@
       "text": "Admin portal (TASK-05): server components fetch PAYMENT_API_BASE (default localhost:8080) with PAYMENT_API_KEY env for payment pages; merchant pages key-exempt. Next 15 searchParams/params are Promises in async pages. Fonts via next/font: Libre Franklin/Source Sans 3/IBM Plex Mono. Tailwind 4 tokens via @theme inline mapping CSS vars. Register form uses useActionState server action + revalidatePath. Walkthrough verified: register -> key -> payment -> authz -> capture -> detail ledger renders CAPTURED; 404 and error states render; intent.py scan 0 findings; gates PASS after build.",
       "cat": "fact",
       "updated": "2026-09-17T15:10:54.594855+00:00"
+    },
+    "boot4-teststack": {
+      "text": "Boot 4 test stack: TestRestTemplate lives in org.springframework.boot.resttestclient (artifact spring-boot-resttestclient, inside starter-webmvc-test); enable with @AutoConfigureTestRestTemplate on RANDOM_PORT tests, plus test-scope spring-boot-restclient for RestTemplateBuilder. Benchmark harness: ./mvnw -q -Pbenchmark exec:java writes benchmarks/results/baseline-<date>.{md,json}; lifecycle forbids double-authorize so warmup+measured auth calls each need a fresh payment.",
+      "cat": "fact",
+      "updated": "2026-09-17T15:47:24.027702+00:00"
     }
   }
 }

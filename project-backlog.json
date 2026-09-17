@@ -50,7 +50,7 @@
     {
       "id": "TASK-06",
       "title": "API integration tests and benchmark baseline",
-      "status": "to-do",
+      "status": "closed",
       "dependencies": [
         "TASK-03"
       ],
@@ -76,8 +76,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T15:10:54.502221+00:00",
+    "last_updated": "2026-09-17T15:47:23.948276+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-06",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T15:47:23.948259+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-06",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T15:12:00.928176+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-05",
@@ -118,19 +132,6 @@
         "old_status": "active",
         "new_status": "closed",
         "at": "2026-09-17T14:38:38.315932+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-03",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T14:30:33.561006+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-07",
-        "status": "to-do",
-        "at": "2026-09-17T14:30:14.578699+00:00"
       }
     ]
   }
