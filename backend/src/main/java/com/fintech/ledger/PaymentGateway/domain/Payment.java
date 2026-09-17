@@ -202,6 +202,17 @@ public class Payment extends BaseEntity {
 					"cannot charge back a payment in status " + status);
 			status = PaymentStatus.CANCELLED;
 		}
+		else if (type == TransactionType.FEE) {
+			// A fee is administrative: it charges against an existing
+			// authorization and never moves the lifecycle, but it cannot
+			// appear without one or exceed the amount it fees against.
+			requireStatus(status == PaymentStatus.AUTHORIZED || status == PaymentStatus.CAPTURED
+					|| status == PaymentStatus.REFUNDED,
+					"cannot record a fee against a payment in status " + status);
+			requireStatus(transaction.getAmount().compareTo(amount) <= 0,
+					"fee " + transaction.getAmount().toPlainString() + " exceeds the payment amount "
+							+ amount.toPlainString());
+		}
 		else {
 			throw new IllegalStateException("unsupported transaction type for status transition: " + type);
 		}

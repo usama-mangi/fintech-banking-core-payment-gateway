@@ -59,16 +59,16 @@
     {
       "id": "TASK-07",
       "title": "Add pagination to list endpoints (merchants, payments)",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-03"
       ],
-      "notes": "list endpoints currently return unbounded arrays; switch to Spring Data Page when the portal grows"
+      "notes": "Envelope {content,page,size,totalElements,totalPages}; size 1..100; fixed createdAt DESC; type-mismatch handler; portal unwraps; 31 tests"
     },
     {
       "id": "TASK-08",
       "title": "Support FEE transactions in ledger API",
-      "status": "to-do",
+      "status": "active",
       "dependencies": [
         "TASK-03"
       ],
@@ -76,8 +76,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T17:02:03.561177+00:00",
+    "last_updated": "2026-09-17T17:17:25.429094+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-08",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T17:17:25.429076+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-07",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T17:15:15.543589+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-07",
@@ -119,19 +133,6 @@
         "old_status": "active",
         "new_status": "closed",
         "at": "2026-09-17T14:44:43.459024+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-04",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T14:39:15.840790+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-08",
-        "status": "to-do",
-        "at": "2026-09-17T14:38:38.407353+00:00"
       }
     ]
   }

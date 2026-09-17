@@ -9,7 +9,8 @@
   2. Merchant submits a payment (amount, currency, description, idempotency key).
   3. Record authorization → capture on a payment; payment status follows the ledger.
   4. Refund a captured payment (full or partial amounts recorded as transactions).
-  5. Admin traces a payment: full chronological transaction list with statuses.
+  5. Record processing fees against a payment with an authorization (AUTHORIZED, CAPTURED or REFUNDED); fees never move the payment's status and are excluded from captured totals.
+  6. Admin traces a payment: full chronological transaction list with statuses.
 - Inputs: JSON over REST. Outputs: JSON payment/merchant/transaction resources with status codes.
 - Operations: create/read on merchants; create/read + ledger-record on payments; list/search by merchant and status.
 

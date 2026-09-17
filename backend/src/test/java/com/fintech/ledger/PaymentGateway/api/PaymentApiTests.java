@@ -172,6 +172,57 @@ class PaymentApiTests {
 	}
 
 	@Test
+	void feeAfterCaptureKeepsStatusAndCapturedTotal() throws Exception {
+		String apiKey = registerMerchant(MerchantStatus.ACTIVE);
+		long paymentId = createPayment(apiKey, "key-fee-ok");
+
+		recordTransaction(apiKey, paymentId, "AUTHORIZATION", "100.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "CAPTURE", "100.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "FEE", "2.50", status().isCreated());
+
+		mockMvc.perform(get("/api/payments/" + paymentId).header("X-API-Key", apiKey))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("CAPTURED"))
+				.andExpect(jsonPath("$.capturedAmountInUsd").value("100.00"))
+				.andExpect(jsonPath("$.transactions", hasSize(3)))
+				.andExpect(jsonPath("$.transactions[2].type").value("FEE"));
+	}
+
+	@Test
+	void feeBeforeAuthorizationReturns409() throws Exception {
+		String apiKey = registerMerchant(MerchantStatus.ACTIVE);
+		long paymentId = createPayment(apiKey, "key-fee-early");
+
+		recordTransaction(apiKey, paymentId, "FEE", "2.50", status().isConflict());
+	}
+
+	@Test
+	void feeExceedingPaymentAmountReturns409ButBoundaryIsAllowed() throws Exception {
+		String apiKey = registerMerchant(MerchantStatus.ACTIVE);
+		long paymentId = createPayment(apiKey, "key-fee-big");
+
+		recordTransaction(apiKey, paymentId, "AUTHORIZATION", "100.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "FEE", "100.01", status().isConflict());
+		recordTransaction(apiKey, paymentId, "FEE", "100.00", status().isCreated());
+	}
+
+	@Test
+	void feeAfterRefundKeepsRefundedStatus() throws Exception {
+		String apiKey = registerMerchant(MerchantStatus.ACTIVE);
+		long paymentId = createPayment(apiKey, "key-fee-refunded");
+
+		recordTransaction(apiKey, paymentId, "AUTHORIZATION", "100.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "CAPTURE", "100.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "REFUND", "30.00", status().isCreated());
+		recordTransaction(apiKey, paymentId, "FEE", "1.25", status().isCreated());
+
+		mockMvc.perform(get("/api/payments/" + paymentId).header("X-API-Key", apiKey))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("REFUNDED"))
+				.andExpect(jsonPath("$.transactions", hasSize(4)));
+	}
+
+	@Test
 	void unknownPaymentTransactionPostReturns404() throws Exception {
 		String apiKey = registerMerchant(MerchantStatus.ACTIVE);
 		recordTransaction(apiKey, 987654, "AUTHORIZATION", "10.00", status().isNotFound());
