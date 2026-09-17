@@ -77,16 +77,45 @@
     {
       "id": "TASK-09",
       "title": "Admin portal authentication: passphrase sign-in, signed session cookie, guarded staff views",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-05"
+      ],
+      "notes": "PORTAL_PASSCODE shared passphrase; HMAC-signed 12h cookie ledger_session; (staff) route-group gate; /login + logout POST; fails closed; stateless across restart; walkthrough evidenced"
+    },
+    {
+      "id": "TASK-10",
+      "title": "Concurrent load benchmark: find where p99 breaks the 200ms target",
+      "status": "active",
+      "dependencies": [
+        "TASK-06"
       ],
       "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T17:23:51.401339+00:00",
+    "last_updated": "2026-09-17T17:42:00.746173+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-10",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T17:42:00.746155+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-10",
+        "status": "to-do",
+        "at": "2026-09-17T17:42:00.648135+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-09",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T17:39:30.909058+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-09",
@@ -120,27 +149,6 @@
         "old_status": "active",
         "new_status": "closed",
         "at": "2026-09-17T17:15:15.543589+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-07",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T17:02:03.561159+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-06",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T15:47:23.948259+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-06",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T15:12:00.928176+00:00"
       }
     ]
   }
