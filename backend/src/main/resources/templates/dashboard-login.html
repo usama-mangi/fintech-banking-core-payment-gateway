@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>Merchant Dashboard — Sign in</title>
+	<style>
+		body { font-family: Georgia, 'Times New Roman', serif; background: #faf9f7; color: #1a1a1a; display: flex; min-height: 100vh; align-items: center; justify-content: center; margin: 0; }
+		.card { border: 1px solid #d8d4cc; background: #fff; padding: 2rem 2.5rem; max-width: 26rem; }
+		h1 { font-size: 1.25rem; margin: 0 0 1rem; letter-spacing: 0.02em; }
+		label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6b665e; margin-bottom: 0.35rem; }
+		input { width: 100%; box-sizing: border-box; font-family: 'SFMono-Regular', Menlo, monospace; font-size: 0.85rem; padding: 0.5rem; border: 1px solid #d8d4cc; background: #fff; }
+		button { margin-top: 1rem; width: 100%; padding: 0.55rem; font: inherit; background: #1a1a1a; color: #fff; border: none; cursor: pointer; letter-spacing: 0.04em; }
+		button:hover { background: #333; }
+		.error { color: #8b2020; font-size: 0.85rem; margin-top: 0.75rem; }
+	</style>
+</head>
+<body>
+	<div class="card">
+		<h1>Merchant Dashboard</h1>
+		<form method="get" action="/dashboard">
+			<label for="key">API key</label>
+			<input id="key" name="key" type="password" placeholder="sk_..." autofocus/>
+			<button type="submit">Sign in</button>
+		</form>
+		<p class="error" th:if="${error}" th:text="${error}"></p>
+	</div>
+</body>
+</html>

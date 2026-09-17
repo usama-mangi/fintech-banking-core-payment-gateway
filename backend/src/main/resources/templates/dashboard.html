@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>Merchant Dashboard</title>
+	<style>
+		body { font-family: Georgia, 'Times New Roman', serif; background: #faf9f7; color: #1a1a1a; margin: 0; }
+		header { display: flex; justify-content: space-between; align-items: baseline; padding: 1rem 2rem; border-bottom: 1px solid #d8d4cc; background: #fff; }
+		header h1 { font-size: 1.1rem; margin: 0; letter-spacing: 0.02em; }
+		header form { margin: 0; }
+		header button { font: inherit; font-size: 0.8rem; background: none; border: 1px solid #d8d4cc; padding: 0.3rem 0.8rem; cursor: pointer; }
+		main { max-width: 60rem; margin: 2rem auto; padding: 0 1.5rem; }
+		.totals { display: flex; gap: 2rem; margin-bottom: 2rem; }
+		.total { border: 1px solid #d8d4cc; background: #fff; padding: 1rem 1.5rem; min-width: 10rem; }
+		.total .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b665e; }
+		.total .value { font-family: 'SFMono-Regular', Menlo, monospace; font-size: 1.4rem; margin-top: 0.25rem; }
+		table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d8d4cc; }
+		th { text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b665e; padding: 0.6rem 1rem; border-bottom: 1px solid #d8d4cc; font-weight: normal; }
+		td { padding: 0.6rem 1rem; border-bottom: 1px solid #eee9e0; font-size: 0.9rem; }
+		td.mono { font-family: 'SFMono-Regular', Menlo, monospace; }
+		.badge { display: inline-block; font-family: 'SFMono-Regular', Menlo, monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 0.15rem 0.5rem; border: 1px solid currentColor; }
+		.CAPTURED { color: #1e5c2e; } .AUTHORIZED { color: #7a5c1e; } .REFUNDED { color: #7a3b1e; }
+		.REQUIRES_PAYMENT { color: #6b665e; } .CANCELLED, .FAILED, .DECLINED { color: #8b2020; }
+		.empty { padding: 2rem; text-align: center; color: #6b665e; font-style: italic; }
+	</style>
+</head>
+<body>
+	<header>
+		<h1 th:text="${merchantName}">Merchant</h1>
+		<form method="post" action="/dashboard/logout">
+			<button type="submit">Sign out</button>
+		</form>
+	</header>
+	<main>
+		<div class="totals">
+			<div class="total">
+				<div class="label">Captured (USD)</div>
+				<div class="value" th:text="${captured}">0.00</div>
+			</div>
+			<div class="total">
+				<div class="label">Refunded (USD)</div>
+				<div class="value" th:text="${refunded}">0.00</div>
+			</div>
+			<div class="total">
+				<div class="label">Payments</div>
+				<div class="value" th:text="${paymentCount}">0</div>
+			</div>
+		</div>
+		<table th:if="${!payments.isEmpty()}">
+			<thead>
+				<tr><th>ID</th><th>Amount</th><th>Status</th><th>Created (UTC)</th></tr>
+			</thead>
+			<tbody>
+				<tr th:each="p : ${payments}">
+					<td class="mono" th:text="${p.id}"></td>
+					<td class="mono" th:text="${p.amount.toPlainString() + ' ' + p.currency}"></td>
+					<td><span class="badge" th:classappend="${p.status}" th:text="${p.status}"></span></td>
+					<td class="mono" th:text="${p.createdAt}"></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="empty" th:if="${payments.isEmpty()}">No payments yet — create one through the gateway API.</div>
+	</main>
+</body>
+</html>

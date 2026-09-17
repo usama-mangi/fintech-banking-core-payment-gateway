@@ -12,6 +12,8 @@
   5. Record processing fees against a payment with an authorization (AUTHORIZED, CAPTURED or REFUNDED); fees never move the payment's status and are excluded from captured totals.
   6. Admin manages merchant standing: suspend (ACTIVE → SUSPENDED), reactivate (SUSPENDED → ACTIVE), close (any non-terminal status → CLOSED, terminal); the domain owns the transition table and the API-key filter locks non-ACTIVE merchants out of the payment API immediately.
   7. Admin traces a payment: full chronological transaction list with statuses.
+  8. Merchant self-service dashboard: a merchant signs in with their API key at `/dashboard` and sees only their own payments with captured/refunded totals (server-rendered Thymeleaf; the key moves to a short-lived httpOnly cookie and is never rendered).
+  9. CSV export: internal consumers page through all payments as `text/csv` at `/api/payments/export` (RFC 4180 quoting, same scoping as the list endpoint).
 - Inputs: JSON over REST. Outputs: JSON payment/merchant/transaction resources with status codes.
 - Operations: create/read + lifecycle transitions on merchants; create/read + ledger-record on payments; list/search by merchant and status.
 
@@ -35,7 +37,7 @@
 
 ### Security
 - Data classification: merchant PII (business name, email), API keys, payment amounts. No cardholder data (PAN/CVV never stored; this gateway records ledger entries, not card details).
-- Access model: static per-merchant API keys (`X-API-Key` header) for the payment API; admin portal behind a shared staff passphrase (HMAC-signed 12-hour session cookie, fails closed, passphrase rotation invalidates all sessions). Per-user accounts are the revisit trigger when a second admin consumer appears.
+- Access model: two API-key tiers — per-merchant keys for the payment API (ownership-scoped: a merchant key only reads its own payments) and an internal key (`INTERNAL_API_KEY`) for ops surfaces: the fee report `/api/fees`, the CSV export, and full cross-merchant reads. Admin portal behind a shared staff passphrase (HMAC-signed 12-hour session cookie, fails closed, passphrase rotation invalidates all sessions). Merchant dashboard sessions are httpOnly API-key cookies scoped to `/dashboard` (1 h). Per-user accounts remain the revisit trigger when a second admin consumer appears.
 - Encryption: TLS terminated outside app for MVP; secrets via environment variables, never committed.
 - Auditability: `BaseEntity` audit columns plus append-only transaction ledger; no updates or deletes on transactions.
 
@@ -78,6 +80,9 @@ GET    /api/payments?merchantId=&status=&page=&size=    → 200 Page<PaymentSumm
 POST   /api/payments                                    → 201 PaymentResponse (idempotent by idempotencyKey)
 GET    /api/payments/{id}                               → 200 PaymentResponse (includes transactions) | 404
 POST   /api/payments/{id}/transactions                  → 201 TransactionResponse (validates transition)
+GET    /api/fees                                        → 200 FeeReport (internal key only)
+GET    /api/payments/export                             → 200 text/csv (internal key; merchant key = own rows)
+GET    /dashboard                                       → 200 HTML merchant self-service (API-key sign-in)
 GET    /actuator/health                                 → liveness for ops
 ```
 

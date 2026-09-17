@@ -19,7 +19,11 @@ Payment gateway ledger: Spring Boot 4.1.1 / Java 21 backend (Maven, `backend/`) 
 | TASK-09 portal passphrase auth + signed sessions | closed | `100ad13` |
 | TASK-10 concurrent load harness + 200ms break point | closed | `10d21a5` |
 | TASK-11 merchant lifecycle endpoints + portal actions | closed | `8481b4c` |
-| TASK-12 portal pagination controls from envelope totals | closed | this commit |
+| TASK-12 portal pagination controls from envelope totals | closed | `585e926` |
+| TASK-13 fee aggregation endpoint `/api/fees` | closed | this commit |
+| TASK-14 scoped auth: internal key tier + ownership scoping | closed | this commit |
+| TASK-15 CSV export `/api/payments/export` | closed | this commit |
+| TASK-16 merchant dashboard (Thymeleaf) + portal `/fees` view | closed | this commit |
 
 Backlog is empty; next tasks are proposals, not commitments.
 
@@ -28,7 +32,7 @@ Backlog is empty; next tasks are proposals, not commitments.
 ```bash
 cd backend  && ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"   # :8080
 cd admin-portal && PAYMENT_API_KEY=sk_... PORTAL_PASSCODE=... npm run dev                          # :3000
-cd backend  && ./mvnw test                          # 35 tests
+cd backend  && ./mvnw test                          # 56 tests
 cd backend  && ./mvnw -q -Pbenchmark exec:java      # latency baseline -> benchmarks/results/
 ```
 
@@ -36,7 +40,7 @@ The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merch
 
 ## Verified state
 
-- 35/35 tests green: 6 repository, 28 MockMvc API slices, 3 RANDOM_PORT end-to-end, 1 context.
+- 56/56 tests green: 6 repository, API slices (incl. fee report, scoping, CSV export, pagination, dashboard), lifecycle domain tests, end-to-end, 1 context.
 - Latency baseline 2026-09-17: p99 <= 23 ms on all four core ops (target 200 ms).
 - Design system in `design.yaml`, intent gates PASS, slop scan clean.
 
@@ -49,4 +53,4 @@ The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merch
 
 ## Suggested next session
 
-Orient, then consider: a fee-aggregation view on top of TASK-08, an audit trail for merchant lifecycle actions, or re-testing the load break point with a larger Hikari pool (TASK-10 memory has the harness details).
+Orient, then consider: a lifecycle audit trail (who suspended which merchant, when), login rate limiting for the portal passphrase, or re-testing the load break point with a larger Hikari pool (TASK-10 memory has the harness details).

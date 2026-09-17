@@ -35,6 +35,12 @@ existing session on restart because cookie signatures stop verifying.## Routes
   `?page=N` pagination.
 - `/payments/[id]` — one payment's chronological ledger with exact amounts and UTC
 timestamps.
+- `/fees` — fee revenue report: totals per merchant and per currency, exact decimals,
+no indicative USD conversion. Uses the backend's internal API key tier.
+
+> Note: since the internal API key tier landed in the backend, `PAYMENT_API_KEY` above
+> should be the *internal* key (`INTERNAL_API_KEY` on the backend) rather than a
+> merchant key — the fees page is internal-only and a merchant key will 403 on it.
 
 ## Checks
 

@@ -31,6 +31,9 @@ export default async function StaffLayout({
             <Link href="/payments" className="hover:text-ledger hover:underline underline-offset-4">
               Payments
             </Link>
+            <Link href="/fees" className="hover:text-ledger hover:underline underline-offset-4">
+              Fees
+            </Link>
             <form action="/logout" method="post">
               <button
                 type="submit"

@@ -129,4 +129,21 @@ export function getPayment(id: number): Promise<PaymentDetail> {
   return request<PaymentDetail>(`/api/payments/${id}`);
 }
 
+export interface MerchantFees {
+  merchantId: number;
+  businessName: string;
+  currency: string;
+  totalFees: string;
+  feeCount: number;
+}
+
+export interface FeeReport {
+  merchants: MerchantFees[];
+  totals: { currency: string; totalFees: string; feeCount: number }[];
+}
+
+export function getFeeReport(): Promise<FeeReport> {
+  return request<FeeReport>("/api/fees");
+}
+
 export type { ApiErrorBody as ApiErrorBodyShape };
