@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * Shapes every error as {status, error, message, timestamp} per
@@ -59,6 +60,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ApiExceptions.ConflictException.class)
 	public ResponseEntity<Map<String, Object>> handleConflict(ApiExceptions.ConflictException ex) {
 		return errorBody(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<Map<String, Object>> handleNoResource(NoResourceFoundException ex) {
+		return errorBody(HttpStatus.NOT_FOUND, "no such endpoint: " + ex.getResourcePath());
 	}
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)

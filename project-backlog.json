@@ -86,16 +86,45 @@
     {
       "id": "TASK-10",
       "title": "Concurrent load benchmark: find where p99 breaks the 200ms target",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-06"
+      ],
+      "notes": "Load harness 5 scenarios x 6 levels; writes break 200ms p99 between 16-64 workers (Hikari pool queueing), list at 64, detail+mixed survive to 256; load-2026-09-17.{md,json}"
+    },
+    {
+      "id": "TASK-11",
+      "title": "Merchant lifecycle endpoints: suspend, reactivate, close with domain transition rules",
+      "status": "active",
+      "dependencies": [
+        "TASK-04"
       ],
       "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T17:42:00.746173+00:00",
+    "last_updated": "2026-09-17T17:54:44.106476+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-11",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T17:54:44.106457+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-11",
+        "status": "to-do",
+        "at": "2026-09-17T17:54:44.021549+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-10",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T17:52:27.937635+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-10",
@@ -128,27 +157,6 @@
         "task": "TASK-09",
         "status": "to-do",
         "at": "2026-09-17T17:23:51.318883+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-08",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T17:19:35.439248+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-08",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T17:17:25.429076+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-07",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T17:15:15.543589+00:00"
       }
     ]
   }

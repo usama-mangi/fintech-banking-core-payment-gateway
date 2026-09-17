@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { registerMerchant, ApiError } from "@/lib/api";
+import { registerMerchant, transitionMerchant, ApiError, type MerchantLifecycleAction } from "@/lib/api";
 import {
   SESSION_COOKIE,
   SESSION_TTL_SECONDS,
@@ -42,6 +42,31 @@ export async function logoutAction(): Promise<void> {
   const store = await cookies();
   store.set(SESSION_COOKIE, "", sessionCookie(0));
   redirect("/login");
+}
+
+const LIFECYCLE_ACTIONS: MerchantLifecycleAction[] = ["suspend", "reactivate", "close"];
+
+export async function merchantLifecycleAction(
+  _prev: FormState | null,
+  formData: FormData
+): Promise<FormState> {
+  const id = String(formData.get("merchantId") ?? "");
+  const action = String(formData.get("action") ?? "") as MerchantLifecycleAction;
+
+  if (!id || !LIFECYCLE_ACTIONS.includes(action)) {
+    return { error: "Unknown lifecycle action." };
+  }
+
+  try {
+    await transitionMerchant(Number(id), action);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return { error: error.message };
+    }
+    return { error: "Could not reach the gateway API. Is the backend running?" };
+  }
+  revalidatePath("/merchants");
+  return { ok: true };
 }
 
 export async function registerMerchantAction(

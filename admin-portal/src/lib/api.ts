@@ -106,6 +106,12 @@ export function registerMerchant(businessName: string, email: string): Promise<M
   });
 }
 
+export type MerchantLifecycleAction = "suspend" | "reactivate" | "close";
+
+export function transitionMerchant(id: number, action: MerchantLifecycleAction): Promise<Merchant> {
+  return request<Merchant>(`/api/merchants/${id}/${action}`, { method: "POST" });
+}
+
 export function listPayments(status?: string): Promise<Page<PaymentSummary>> {
   const query = status ? `?status=${encodeURIComponent(status)}` : "";
   return request<Page<PaymentSummary>>(`/api/payments${query}`);

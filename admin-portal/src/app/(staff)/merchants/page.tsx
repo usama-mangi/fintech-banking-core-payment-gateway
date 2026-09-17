@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ApiError, listMerchants, type Merchant } from "@/lib/api";
 import { LedgerRow, LedgerTable, MonoCell, UtcTimestamp } from "@/components/LedgerTable";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MerchantActions } from "@/components/MerchantActions";
 import { RegisterMerchantForm } from "@/components/RegisterMerchantForm";
 
 export const metadata: Metadata = {
@@ -40,8 +41,8 @@ export default async function MerchantsPage() {
         </p>
       ) : (
         <LedgerTable
-          caption="All merchants, newest last, with status and API key"
-          head={["Merchant", "Email", "Status", "API key", "Registered"]}
+          caption="All merchants, newest last, with status, API key and lifecycle actions"
+          head={["Merchant", "Email", "Status", "API key", "Registered", "Actions"]}
         >
           {merchants.map((merchant, index) => (
             <LedgerRow key={merchant.id} index={index}>
@@ -55,6 +56,9 @@ export default async function MerchantsPage() {
               </td>
               <td className="px-3 py-2">
                 <UtcTimestamp value={merchant.createdAt} />
+              </td>
+              <td className="px-3 py-2">
+                <MerchantActions merchantId={merchant.id} status={merchant.status} />
               </td>
             </LedgerRow>
           ))}

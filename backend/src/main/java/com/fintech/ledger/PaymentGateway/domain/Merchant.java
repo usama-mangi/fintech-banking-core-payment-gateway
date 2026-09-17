@@ -93,7 +93,41 @@ public class Merchant extends BaseEntity {
 		return status;
 	}
 
-	public void setStatus(MerchantStatus status) {
+	/**
+	 * Lifecycle transitions live here, not in service code, so no code path
+	 * can set a status the lifecycle does not allow. Illegal transitions
+	 * throw {@link IllegalStateException}, which the API maps to 409.
+	 */
+	public void activate() {
+		requireStatus(status == MerchantStatus.PENDING, "cannot activate a merchant in status " + status);
+		status = MerchantStatus.ACTIVE;
+	}
+
+	public void suspend() {
+		requireStatus(status == MerchantStatus.ACTIVE, "cannot suspend a merchant in status " + status);
+		status = MerchantStatus.SUSPENDED;
+	}
+
+	public void reactivate() {
+		requireStatus(status == MerchantStatus.SUSPENDED, "cannot reactivate a merchant in status " + status);
+		status = MerchantStatus.ACTIVE;
+	}
+
+	public void close() {
+		requireStatus(status == MerchantStatus.PENDING || status == MerchantStatus.ACTIVE
+				|| status == MerchantStatus.SUSPENDED, "cannot close a merchant in status " + status);
+		status = MerchantStatus.CLOSED;
+	}
+
+	void setStatus(MerchantStatus status) {
+		// Package-private: JPA and tests within the domain's package only.
+		// Lifecycle changes go through the transition methods above.
 		this.status = status;
+	}
+
+	private static void requireStatus(boolean allowed, String message) {
+		if (!allowed) {
+			throw new IllegalStateException(message);
+		}
 	}
 }

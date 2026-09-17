@@ -59,4 +59,19 @@ public class MerchantController {
 	public MerchantDtos.MerchantResponse get(@PathVariable Long id) {
 		return merchantService.getById(id);
 	}
+
+	@PostMapping("/{id}/suspend")
+	public MerchantDtos.MerchantResponse suspend(@PathVariable Long id) {
+		return merchantService.suspend(id);
+	}
+
+	@PostMapping("/{id}/reactivate")
+	public MerchantDtos.MerchantResponse reactivate(@PathVariable Long id) {
+		return merchantService.reactivate(id);
+	}
+
+	@PostMapping("/{id}/close")
+	public MerchantDtos.MerchantResponse close(@PathVariable Long id) {
+		return merchantService.close(id);
+	}
 }

@@ -80,6 +80,70 @@ class MerchantApiTests {
 	}
 
 	@Test
+	void suspendReactivatesAndClosesMerchantWithLockout() throws Exception {
+		String created = mockMvc.perform(post("/api/merchants")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"businessName\": \"Lockout Co\", \"email\": \"ops@lockout-api.test\"}"))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+		long id = Long.parseLong(created.replaceAll(".*\"id\":(\\d+).*", "$1"));
+		String apiKey = created.replaceAll(".*\"apiKey\":\"([^\"]+)\".*", "$1");
+
+		// Active merchant can create payments.
+		mockMvc.perform(post("/api/payments")
+				.header("X-API-Key", apiKey)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"amount\": \"5.00\", \"currency\": \"USD\", \"description\": \"x\", \"idempotencyKey\": \"lockout-1\"}"))
+				.andExpect(status().isCreated());
+
+		// Double suspend is a conflict.
+		mockMvc.perform(post("/api/merchants/" + id + "/suspend")).andExpect(status().isOk());
+		mockMvc.perform(post("/api/merchants/" + id + "/suspend"))
+				.andExpect(status().isConflict())
+				.andExpect(jsonPath("$.status").value(409));
+
+		// Suspended merchant is locked out of the payment API immediately.
+		mockMvc.perform(post("/api/payments")
+				.header("X-API-Key", apiKey)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"amount\": \"5.00\", \"currency\": \"USD\", \"description\": \"x\", \"idempotencyKey\": \"lockout-2\"}"))
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.message").value("merchant is suspended"));
+
+		// Reactivate restores access.
+		mockMvc.perform(post("/api/merchants/" + id + "/reactivate"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("ACTIVE"));
+		mockMvc.perform(post("/api/payments")
+				.header("X-API-Key", apiKey)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"amount\": \"5.00\", \"currency\": \"USD\", \"description\": \"x\", \"idempotencyKey\": \"lockout-3\"}"))
+				.andExpect(status().isCreated());
+
+		// Close is terminal: every further transition 409s.
+		mockMvc.perform(post("/api/merchants/" + id + "/close")).andExpect(status().isOk());
+		mockMvc.perform(post("/api/merchants/" + id + "/suspend")).andExpect(status().isConflict());
+		mockMvc.perform(post("/api/merchants/" + id + "/reactivate")).andExpect(status().isConflict());
+		mockMvc.perform(post("/api/merchants/" + id + "/close")).andExpect(status().isConflict());
+	}
+
+	@Test
+	void lifecycleActionOnUnknownMerchantReturns404() throws Exception {
+		mockMvc.perform(post("/api/merchants/999999/suspend")).andExpect(status().isNotFound());
+		mockMvc.perform(post("/api/merchants/999999/reactivate")).andExpect(status().isNotFound());
+		mockMvc.perform(post("/api/merchants/999999/close")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	void unknownEndpointReturns404Not500() throws Exception {
+		mockMvc.perform(post("/api/merchants/1/no-such-action"))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.status").value(404))
+				.andExpect(jsonPath("$.error").value("Not Found"))
+				.andExpect(jsonPath("$.message").isNotEmpty());
+	}
+
+	@Test
 	void postInvalidBodyReturns400() throws Exception {
 		mockMvc.perform(post("/api/merchants")
 				.contentType(MediaType.APPLICATION_JSON)

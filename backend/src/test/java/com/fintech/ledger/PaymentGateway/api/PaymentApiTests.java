@@ -40,12 +40,23 @@ class PaymentApiTests {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	/** Registers a merchant with a fresh key and returns the key. */
+	/**
+	 * Registers a merchant with a fresh key and returns the key. Non-ACTIVE
+	 * statuses are reached through the domain transitions, exactly like the
+	 * API would - the lifecycle methods are the only way to change status.
+	 */
 	private String registerMerchant(MerchantStatus status) {
 		String suffix = UUID.randomUUID().toString().substring(0, 8);
 		return transactionTemplate.execute(status1 -> {
 			Merchant merchant = new Merchant("Ledger Co " + suffix, "ops-" + suffix + "@ledger.test", "sk_test_" + suffix);
-			merchant.setStatus(status);
+			switch (status) {
+				case SUSPENDED -> merchant.suspend();
+				case CLOSED -> merchant.close();
+				case PENDING -> throw new IllegalArgumentException(
+						"PENDING is not producible through registration; request another status");
+				case ACTIVE -> {
+				}
+			}
 			return merchantRepository.save(merchant).getApiKey();
 		});
 	}

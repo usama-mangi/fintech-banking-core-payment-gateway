@@ -43,6 +43,28 @@ public class MerchantService {
 		return toResponse(merchant);
 	}
 
+	@Transactional
+	public MerchantDtos.MerchantResponse suspend(Long id) {
+		return transition(id, Merchant::suspend);
+	}
+
+	@Transactional
+	public MerchantDtos.MerchantResponse reactivate(Long id) {
+		return transition(id, Merchant::reactivate);
+	}
+
+	@Transactional
+	public MerchantDtos.MerchantResponse close(Long id) {
+		return transition(id, Merchant::close);
+	}
+
+	private MerchantDtos.MerchantResponse transition(Long id, java.util.function.Consumer<Merchant> action) {
+		Merchant merchant = merchantRepository.findById(id)
+				.orElseThrow(() -> new ApiExceptions.NotFoundException("merchant " + id + " not found"));
+		action.accept(merchant);
+		return toResponse(merchant);
+	}
+
 	@Transactional(readOnly = true)
 	public PageResponse<MerchantDtos.MerchantResponse> list(MerchantStatus status, Pageable pageable) {
 		var page = status == null

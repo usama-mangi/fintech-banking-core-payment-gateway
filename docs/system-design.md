@@ -10,9 +10,10 @@
   3. Record authorization → capture on a payment; payment status follows the ledger.
   4. Refund a captured payment (full or partial amounts recorded as transactions).
   5. Record processing fees against a payment with an authorization (AUTHORIZED, CAPTURED or REFUNDED); fees never move the payment's status and are excluded from captured totals.
-  6. Admin traces a payment: full chronological transaction list with statuses.
+  6. Admin manages merchant standing: suspend (ACTIVE → SUSPENDED), reactivate (SUSPENDED → ACTIVE), close (any non-terminal status → CLOSED, terminal); the domain owns the transition table and the API-key filter locks non-ACTIVE merchants out of the payment API immediately.
+  7. Admin traces a payment: full chronological transaction list with statuses.
 - Inputs: JSON over REST. Outputs: JSON payment/merchant/transaction resources with status codes.
-- Operations: create/read on merchants; create/read + ledger-record on payments; list/search by merchant and status.
+- Operations: create/read + lifecycle transitions on merchants; create/read + ledger-record on payments; list/search by merchant and status.
 
 ### Non-functional
 
