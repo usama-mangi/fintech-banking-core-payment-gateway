@@ -34,7 +34,7 @@
 
 ### Security
 - Data classification: merchant PII (business name, email), API keys, payment amounts. No cardholder data (PAN/CVV never stored; this gateway records ledger entries, not card details).
-- Access model: static per-merchant API keys (`X-API-Key` header) for the payment API; admin portal trusted on internal network for MVP.
+- Access model: static per-merchant API keys (`X-API-Key` header) for the payment API; admin portal behind a shared staff passphrase (HMAC-signed 12-hour session cookie, fails closed, passphrase rotation invalidates all sessions). Per-user accounts are the revisit trigger when a second admin consumer appears.
 - Encryption: TLS terminated outside app for MVP; secrets via environment variables, never committed.
 - Auditability: `BaseEntity` audit columns plus append-only transaction ledger; no updates or deletes on transactions.
 

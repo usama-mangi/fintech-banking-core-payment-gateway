@@ -68,16 +68,45 @@
     {
       "id": "TASK-08",
       "title": "Support FEE transactions in ledger API",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-03"
       ],
-      "notes": "Payment.record() rejects FEE (no status transition); decide fee recording flow: either allow as non-transition entry or compute fees at capture"
+      "notes": "FEE accepted in AUTHORIZED/CAPTURED/REFUNDED, capped at payment amount, status-neutral, excluded from captured total; 35 tests"
+    },
+    {
+      "id": "TASK-09",
+      "title": "Admin portal authentication: passphrase sign-in, signed session cookie, guarded staff views",
+      "status": "active",
+      "dependencies": [
+        "TASK-05"
+      ],
+      "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T17:17:25.429094+00:00",
+    "last_updated": "2026-09-17T17:23:51.401339+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-09",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T17:23:51.401320+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-09",
+        "status": "to-do",
+        "at": "2026-09-17T17:23:51.318883+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-08",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T17:19:35.439248+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-08",
@@ -112,27 +141,6 @@
         "old_status": "to-do",
         "new_status": "active",
         "at": "2026-09-17T15:12:00.928176+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-05",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T15:10:54.502204+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-05",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T14:52:21.401944+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-04",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T14:44:43.459024+00:00"
       }
     ]
   }

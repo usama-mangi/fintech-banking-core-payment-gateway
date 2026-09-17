@@ -14,23 +14,26 @@ Payment gateway ledger: Spring Boot 4.1.1 / Java 21 backend (Maven, `backend/`) 
 | TASK-04 X-API-Key auth filter on `/api/payments/*` | closed | `6bef16f` |
 | TASK-05 admin portal: merchants, payments list, detail ledger views | closed | `e738889` |
 | TASK-06 end-to-end HTTP suite + latency baseline | closed | `abc15d8` |
+| TASK-07 pagination envelope on list endpoints | closed | `2e47410` |
+| TASK-08 FEE transactions in the ledger | closed | `a7d7233` |
+| TASK-09 portal passphrase auth + signed sessions | closed | this commit |
 
-Remaining backlog: TASK-07 (pagination), TASK-08 (FEE transactions) — both open, no active task.
+Backlog is empty; next tasks are proposals, not commitments.
 
 ## How to run
 
 ```bash
 cd backend  && ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"   # :8080
-cd admin-portal && PAYMENT_API_KEY=sk_... npm run dev                                              # :3000
-cd backend  && ./mvnw test                          # 26 tests
+cd admin-portal && PAYMENT_API_KEY=sk_... PORTAL_PASSCODE=... npm run dev                          # :3000
+cd backend  && ./mvnw test                          # 35 tests
 cd backend  && ./mvnw -q -Pbenchmark exec:java      # latency baseline -> benchmarks/results/
 ```
 
-The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merchants`) for payment pages; merchant pages are open.
+The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merchants`) for its gateway calls, and `PORTAL_PASSCODE` for staff sign-in — without it, every staff view redirects to `/login` and login fails closed.
 
 ## Verified state
 
-- 26/26 tests green: 6 repository, 16 MockMvc API slices, 3 RANDOM_PORT end-to-end, 1 context.
+- 35/35 tests green: 6 repository, 28 MockMvc API slices, 3 RANDOM_PORT end-to-end, 1 context.
 - Latency baseline 2026-09-17: p99 <= 23 ms on all four core ops (target 200 ms).
 - Design system in `design.yaml`, intent gates PASS, slop scan clean.
 
@@ -39,8 +42,8 @@ The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merch
 - Boot 4 module splits hit this project three times: H2 console needs `spring-boot-h2console`, `TestRestTemplate` moved to `org.springframework.boot.resttestclient` (+ test-scope `spring-boot-restclient` for `RestTemplateBuilder`), Jackson is `tools.jackson` not `com.fasterxml`.
 - Ledger rows persist only through `Payment`'s `CascadeType.ALL`; saving transactions separately double-inserts.
 - `Payment.record()` rejects illegal transitions (409) and treats FAILED transactions as processor facts that always record.
-- Admin trust model: merchant/actuator endpoints open, cross-merchant reads allowed on purpose; revisit triggers in TASK-04 plan and system-design.
+- Admin trust model: merchant/actuator endpoints open, cross-merchant reads allowed on purpose; the portal itself is gated by a shared passphrase (`PORTAL_PASSCODE`) with an HMAC-signed 12-hour cookie (`ledger_session`), stateless — rotating the passphrase invalidates all sessions. Revisit triggers in system-design (per-user accounts when a second admin consumer appears).
 
 ## Suggested next session
 
-Orient, then pick TASK-07 or TASK-08, or discuss the portal auth story (currently trusts the internal network).
+Orient, then consider: merchant lifecycle endpoints (suspend/reactivate/close are enforced by the filter but have no endpoint), pagination controls in the portal (the envelope already carries totals), or a fee-aggregation view on top of TASK-08.

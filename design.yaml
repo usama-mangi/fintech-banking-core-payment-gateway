@@ -104,6 +104,13 @@ components:
     tokens_consumed: [primary-button.bg, fg-default]
 
 screens:
+  LoginScreen:
+    dominant_action: sign in with the shared staff passphrase
+    dominant_message: this surface holds ledger truth, so it sits behind credentials
+    ctas: 1
+    uses_components: [PrimaryButton]
+    slop_scan: clean
+    hci_scan: pass
   MerchantsOverview:
     dominant_action: register a merchant
     dominant_message: every merchant account and its standing, newest first
@@ -122,6 +129,7 @@ screens:
 log:
   last_updated: 2026-09-17
   recent_changes:
+    - "TASK-09: added the sign-in screen (standalone shell, no ledger chrome) and moved header/footer chrome into the authenticated staff layout; token set and motion unchanged."
     - "Initialized design system for the admin portal: field-notes/ledger direction, paper-ink-green token set, Libre Franklin + Source Sans 3 + IBM Plex Mono, productive motion."
     - "TASK-05: merchants, payments list and payment detail screens built on the token set; ledger-row reveal shipped as the L3 signature motion with reduced-motion opacity fallback; intent gates re-run after build, all pass."
 

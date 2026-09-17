@@ -1,11 +1,47 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { registerMerchant, ApiError } from "@/lib/api";
+import {
+  SESSION_COOKIE,
+  SESSION_TTL_SECONDS,
+  passphraseMatches,
+  sessionCookie,
+  signSession,
+} from "@/lib/session";
 
 export interface FormState {
   error?: string;
   ok?: boolean;
+}
+
+/** Only same-origin absolute paths may serve as a post-login target. */
+function safeRedirectTarget(raw: string | null | undefined): string {
+  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/merchants";
+}
+
+export async function loginAction(
+  _prev: FormState | null,
+  formData: FormData
+): Promise<FormState> {
+  const passphrase = String(formData.get("passphrase") ?? "");
+  const target = safeRedirectTarget(String(formData.get("next") ?? ""));
+
+  if (!passphrase || !passphraseMatches(passphrase)) {
+    return { error: "Wrong passphrase. Ask whoever runs the gateway for the current one." };
+  }
+
+  const store = await cookies();
+  store.set(SESSION_COOKIE, signSession(), sessionCookie(SESSION_TTL_SECONDS));
+  redirect(target);
+}
+
+export async function logoutAction(): Promise<void> {
+  const store = await cookies();
+  store.set(SESSION_COOKIE, "", sessionCookie(0));
+  redirect("/login");
 }
 
 export async function registerMerchantAction(
