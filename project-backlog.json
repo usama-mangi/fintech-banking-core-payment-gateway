@@ -23,7 +23,7 @@
     {
       "id": "TASK-03",
       "title": "REST API: payments and transaction ledger endpoints",
-      "status": "to-do",
+      "status": "closed",
       "dependencies": [
         "TASK-02"
       ],
@@ -64,11 +64,40 @@
         "TASK-03"
       ],
       "notes": "list endpoints currently return unbounded arrays; switch to Spring Data Page when the portal grows"
+    },
+    {
+      "id": "TASK-08",
+      "title": "Support FEE transactions in ledger API",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-03"
+      ],
+      "notes": "Payment.record() rejects FEE (no status transition); decide fee recording flow: either allow as non-transition entry or compute fees at capture"
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T14:30:14.578717+00:00",
+    "last_updated": "2026-09-17T14:38:38.407370+00:00",
     "recent_changes": [
+      {
+        "action": "add",
+        "task": "TASK-08",
+        "status": "to-do",
+        "at": "2026-09-17T14:38:38.407353+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-03",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T14:38:38.315932+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-03",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T14:30:33.561006+00:00"
+      },
       {
         "action": "add",
         "task": "TASK-07",
@@ -102,24 +131,6 @@
         "old_status": "to-do",
         "new_status": "active",
         "at": "2026-09-17T14:20:15.468216+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-06",
-        "status": "to-do",
-        "at": "2026-09-17T14:14:41.794057+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-05",
-        "status": "to-do",
-        "at": "2026-09-17T14:14:41.713470+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-04",
-        "status": "to-do",
-        "at": "2026-09-17T14:14:41.633668+00:00"
       }
     ]
   }

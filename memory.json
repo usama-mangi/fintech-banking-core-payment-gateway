@@ -30,6 +30,11 @@
       "text": "GlobalExceptionHandler returns {status, error, message, timestamp}: 400 MethodArgumentNotValid, 404 NotFoundException, 409 DuplicateEmailException, 500 fallback (message logged, generic body). TASK-03 reuses it; only new exception types need mapping.",
       "cat": "decision",
       "updated": "2026-09-17T14:30:14.662508+00:00"
+    },
+    "domain-ledger-invariants": {
+      "text": "Payment.record() rejects illegal transitions (IllegalStateException -> 409 via GlobalExceptionHandler). FAILED transactions always recorded and set status FAILED regardless of current state. FEE type has no transition yet (TASK-08). Ledger rows persist ONLY through Payment's CascadeType.ALL: an extra transactionRepository.save() double-inserted rows and made capturedAmountInUsd report 140 instead of 70.",
+      "cat": "decision",
+      "updated": "2026-09-17T14:38:38.500609+00:00"
     }
   }
 }

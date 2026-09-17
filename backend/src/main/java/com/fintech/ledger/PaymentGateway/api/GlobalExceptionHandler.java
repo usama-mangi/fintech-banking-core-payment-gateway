@@ -40,6 +40,21 @@ public class GlobalExceptionHandler {
 		return errorBody(HttpStatus.CONFLICT, ex.getMessage());
 	}
 
+	@ExceptionHandler(ApiExceptions.BadRequestException.class)
+	public ResponseEntity<Map<String, Object>> handleBadRequest(ApiExceptions.BadRequestException ex) {
+		return errorBody(HttpStatus.BAD_REQUEST, ex.getMessage());
+	}
+
+	@ExceptionHandler(ApiExceptions.ConflictException.class)
+	public ResponseEntity<Map<String, Object>> handleConflict(ApiExceptions.ConflictException ex) {
+		return errorBody(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
+		return errorBody(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, Object>> handleUnexpected(Exception ex) {
 		log.error("Unhandled exception", ex);

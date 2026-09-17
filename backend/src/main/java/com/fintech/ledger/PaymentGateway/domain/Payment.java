@@ -169,25 +169,48 @@ public class Payment extends BaseEntity {
 
 	/**
 	 * Record a transaction against this payment, keeping the ledger
-	 * chronological and moving the payment's status accordingly.
+	 * chronological and moving the payment's status accordingly. Rejects
+	 * transitions the lifecycle does not allow instead of silently ignoring
+	 * them, so the ledger can never imply a state the status field contradicts.
 	 */
 	public void record(Transaction transaction) {
-		addTransaction(transaction);
+		if (transaction.getStatus() == TransactionStatus.FAILED) {
+			// A declined entry is a fact about the processor, not the ledger's
+			// position in the lifecycle; record it and fail the payment.
+			addTransaction(transaction);
+			status = PaymentStatus.FAILED;
+			return;
+		}
 		TransactionType type = transaction.getType();
-		if (type == TransactionType.AUTHORIZATION && status == PaymentStatus.REQUIRES_PAYMENT) {
+		if (type == TransactionType.AUTHORIZATION) {
+			requireStatus(status == PaymentStatus.REQUIRES_PAYMENT,
+					"cannot authorize a payment in status " + status);
 			status = PaymentStatus.AUTHORIZED;
 		}
-		else if (type == TransactionType.CAPTURE && status == PaymentStatus.AUTHORIZED) {
+		else if (type == TransactionType.CAPTURE) {
+			requireStatus(status == PaymentStatus.AUTHORIZED,
+					"cannot capture a payment in status " + status);
 			status = PaymentStatus.CAPTURED;
 		}
-		else if (type == TransactionType.REFUND && status == PaymentStatus.CAPTURED) {
+		else if (type == TransactionType.REFUND) {
+			requireStatus(status == PaymentStatus.CAPTURED,
+					"cannot refund a payment in status " + status);
 			status = PaymentStatus.REFUNDED;
 		}
 		else if (type == TransactionType.CHARGEBACK) {
+			requireStatus(status == PaymentStatus.CAPTURED || status == PaymentStatus.AUTHORIZED,
+					"cannot charge back a payment in status " + status);
 			status = PaymentStatus.CANCELLED;
 		}
-		else if (transaction.getStatus() == TransactionStatus.FAILED) {
-			status = PaymentStatus.FAILED;
+		else {
+			throw new IllegalStateException("unsupported transaction type for status transition: " + type);
+		}
+		addTransaction(transaction);
+	}
+
+	private static void requireStatus(boolean allowed, String message) {
+		if (!allowed) {
+			throw new IllegalStateException(message);
 		}
 	}
 

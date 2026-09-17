@@ -16,9 +16,23 @@ public final class ApiExceptions {
 		}
 	}
 
+	/** Malformed request content that Bean Validation cannot express; handler maps to 400. */
+	public static class BadRequestException extends RuntimeException {
+		public BadRequestException(String message) {
+			super(message);
+		}
+	}
+
 	/** Unique constraint violated (e.g. merchant email); handler maps to 409. */
 	public static class DuplicateEmailException extends RuntimeException {
 		public DuplicateEmailException(String message) {
+			super(message);
+		}
+	}
+
+	/** Illegal state transition or conflicting request state; handler maps to 409. */
+	public static class ConflictException extends RuntimeException {
+		public ConflictException(String message) {
 			super(message);
 		}
 	}
