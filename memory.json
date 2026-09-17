@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "entries": {
+    "stack-versions": {
+      "text": "Spring Boot 4.1.1 parent BOM, Java 21, Maven wrapper; Next.js 15.5.25, React 19.1.0, Tailwind 4, TypeScript 5. H2 runtime + PostgreSQL runtime in backend/pom.xml. Deps: webmvc, data-jpa, validation, actuator.",
+      "cat": "fact",
+      "updated": "2026-09-17T14:14:56.821261+00:00"
+    },
+    "code-conventions": {
+      "text": "No Lombok: manual getters/setters with guard clauses throwing IllegalArgumentException in constructors and setters. Entities extend BaseEntity (audit fields). Package com.fintech.ledger.PaymentGateway. Repository tests use H2; Payment.record() owns status transitions; Payment.capturedAmountInUsd() computes captures net of refunds via Currency.getUsdRate().",
+      "cat": "pattern",
+      "updated": "2026-09-17T14:14:56.901196+00:00"
+    },
+    "decisions": {
+      "text": "system-design.md decision: monolithic Spring Boot module, /api REST prefix, error body {status,error,message,timestamp} via RestControllerAdvice, idempotent POST /api/payments by idempotencyKey returning 200 on duplicate, 409 on illegal state transition, H2 dev / Postgres prod, static X-API-Key auth (TASK-04). Revisit triggers documented in docs/system-design.md section 7.",
+      "cat": "decision",
+      "updated": "2026-09-17T14:14:56.980364+00:00"
+    },
+    "boot4-h2console": {
+      "text": "Spring Boot 4 moved the H2 console servlet into org.springframework.boot:spring-boot-h2console (runtime scope). Without it, spring.h2.console.enabled=true silently does nothing and /h2-console 404s. Verified 2026-09-17 against docs.spring.io/spring-boot/reference/data/sql.html.",
+      "cat": "fact",
+      "updated": "2026-09-17T14:25:43.573810+00:00"
+    },
+    "boot4-package-layout": {
+      "text": "Boot 4 test annotations live in new packages: org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest, org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest. Use spring-boot-starter-webmvc-test / spring-boot-starter-data-jpa-test artifacts. Hibernate 7 auto-detects dialect; never set spring.jpa.database-platform explicitly.",
+      "cat": "fact",
+      "updated": "2026-09-17T14:25:43.653298+00:00"
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "project": {
+    "name": "fintech-banking-core-payment-gateway",
+    "description": "Payment gateway ledger backend (Spring Boot 4) with Next.js admin portal"
+  },
+  "tasks": [
+    {
+      "id": "TASK-01",
+      "title": "Spring profile config: H2 dev profile with console, datasource and JPA settings",
+      "status": "closed",
+      "dependencies": [],
+      "notes": "application.properties is bare; add dev/prod profiles, H2 console, open-in-view off, SQL logging in dev"
+    },
+    {
+      "id": "TASK-02",
+      "title": "REST API: merchants CRUD endpoints with validation and error handling",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-01"
+      ],
+      "notes": "POST/GET /api/merchants, DTOs, RestControllerAdvice error format per system-design.md"
+    },
+    {
+      "id": "TASK-03",
+      "title": "REST API: payments and transaction ledger endpoints",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-02"
+      ],
+      "notes": "POST/GET /api/payments, POST /api/payments/{id}/transactions, idempotency by idempotencyKey, 409 on illegal transitions"
+    },
+    {
+      "id": "TASK-04",
+      "title": "API-key auth filter for merchant endpoints (X-API-Key)",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-03"
+      ],
+      "notes": "Static per-merchant key lookup; 401 without key, 403 for wrong merchant scope; admin endpoints exempt for MVP"
+    },
+    {
+      "id": "TASK-05",
+      "title": "Admin portal: connect to backend API (merchants and payments views)",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-03"
+      ],
+      "notes": "Replace default Next.js page with data views backed by /api; typecheck and lint gates"
+    },
+    {
+      "id": "TASK-06",
+      "title": "API integration tests and benchmark baseline",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-03"
+      ],
+      "notes": "MockMvc/WebTestClient integration tests for all endpoints; record baseline latency into benchmarks/results/"
+    }
+  ],
+  "log": {
+    "last_updated": "2026-09-17T14:25:43.494275+00:00",
+    "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-01",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T14:25:43.494257+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-01",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T14:20:15.468216+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-06",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.794057+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-05",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.713470+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-04",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.633668+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-03",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.431365+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-02",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.349929+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-01",
+        "status": "to-do",
+        "at": "2026-09-17T14:14:41.270213+00:00"
+      }
+    ]
+  }
+}
