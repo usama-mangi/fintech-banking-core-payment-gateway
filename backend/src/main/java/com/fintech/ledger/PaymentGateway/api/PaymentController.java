@@ -42,16 +42,22 @@ public class PaymentController {
 
 	@GetMapping
 	public PageResponse<PaymentDtos.PaymentSummary> list(
-			@RequestParam(name = "merchantId", required = false) Long merchantId,
+			@RequestAttribute(name = ApiKeyAuthFilter.MERCHANT_ATTRIBUTE, required = false) Long merchantId,
+			@RequestAttribute(name = ApiKeyAuthFilter.INTERNAL_ATTRIBUTE, required = false) Boolean internal,
+			@RequestParam(name = "merchantId", required = false) Long requestedMerchantId,
 			@RequestParam(name = "status", required = false) PaymentStatus status,
 			@RequestParam(name = "page", required = false) Integer page,
 			@RequestParam(name = "size", required = false) Integer size) {
-		return paymentService.list(merchantId, status, PageRequests.of(page, size));
+		return paymentService.list(merchantId, Boolean.TRUE.equals(internal), requestedMerchantId, status,
+				PageRequests.of(page, size));
 	}
 
 	@GetMapping("/{id}")
-	public PaymentDtos.PaymentDetail get(@PathVariable Long id) {
-		return paymentService.getDetail(id);
+	public PaymentDtos.PaymentDetail get(
+			@PathVariable Long id,
+			@RequestAttribute(name = ApiKeyAuthFilter.MERCHANT_ATTRIBUTE, required = false) Long merchantId,
+			@RequestAttribute(name = ApiKeyAuthFilter.INTERNAL_ATTRIBUTE, required = false) Boolean internal) {
+		return paymentService.getDetail(id, merchantId, Boolean.TRUE.equals(internal));
 	}
 
 	@PostMapping("/{id}/transactions")

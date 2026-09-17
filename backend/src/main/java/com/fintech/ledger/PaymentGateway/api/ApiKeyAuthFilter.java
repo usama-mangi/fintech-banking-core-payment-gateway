@@ -33,13 +33,16 @@ public class ApiKeyAuthFilter implements Filter {
 
 	public static final String HEADER = "X-API-Key";
 	public static final String MERCHANT_ATTRIBUTE = "authenticatedMerchantId";
+	public static final String INTERNAL_ATTRIBUTE = "internalRequest";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private final MerchantRepository merchantRepository;
+	private final String internalApiKey;
 
-	public ApiKeyAuthFilter(MerchantRepository merchantRepository) {
+	public ApiKeyAuthFilter(MerchantRepository merchantRepository, String internalApiKey) {
 		this.merchantRepository = merchantRepository;
+		this.internalApiKey = internalApiKey;
 	}
 
 	@Override
@@ -49,12 +52,28 @@ public class ApiKeyAuthFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		String apiKey = httpRequest.getHeader(HEADER);
+
+		// The internal key (ops/portal/export) bypasses merchant binding;
+		// merchant keys are scoped to their own data downstream.
+		if (internalApiKey != null && !internalApiKey.isBlank() && internalApiKey.equals(apiKey)) {
+			httpRequest.setAttribute(INTERNAL_ATTRIBUTE, true);
+			chain.doFilter(request, response);
+			return;
+		}
+
 		Merchant merchant = apiKey == null ? null : merchantRepository.findByApiKey(apiKey).orElse(null);
 
 		if (merchant == null) {
 			writeError(httpResponse, HttpStatus.UNAUTHORIZED, "missing or unknown API key");
 			return;
 		}
+
+		// Fee revenue reporting is internal-only; merchant keys never pass.
+		if (httpRequest.getRequestURI().equals("/api/fees")) {
+			writeError(httpResponse, HttpStatus.FORBIDDEN, "fee reporting requires the internal key");
+			return;
+		}
+
 		if (merchant.getStatus() != MerchantStatus.ACTIVE) {
 			writeError(httpResponse, HttpStatus.FORBIDDEN, "merchant is " + merchant.getStatus().name().toLowerCase());
 			return;

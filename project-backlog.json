@@ -113,16 +113,16 @@
     {
       "id": "TASK-13",
       "title": "Fee aggregation endpoint (totals per merchant and overall)",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-08"
       ],
-      "notes": ""
+      "notes": "JPQL sum(group by merchant,currency) + per-currency totals; /api/fees; exact decimal strings; 45 tests"
     },
     {
       "id": "TASK-14",
       "title": "Scoped merchant auth: merchant keys read only their own data; internal key for ops",
-      "status": "to-do",
+      "status": "active",
       "dependencies": [
         "TASK-04"
       ],
@@ -149,8 +149,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T19:10:56.641425+00:00",
+    "last_updated": "2026-09-17T19:15:38.411671+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-14",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T19:15:38.411653+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-13",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T19:15:38.302672+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-13",
@@ -188,19 +202,6 @@
         "old_status": "active",
         "new_status": "closed",
         "at": "2026-09-17T18:39:43.650604+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-12",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T18:29:42.334005+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-12",
-        "status": "to-do",
-        "at": "2026-09-17T18:29:42.248192+00:00"
       }
     ]
   }

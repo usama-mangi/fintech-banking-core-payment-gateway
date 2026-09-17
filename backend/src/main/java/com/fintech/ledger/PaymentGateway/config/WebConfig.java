@@ -15,10 +15,11 @@ import com.fintech.ledger.PaymentGateway.repository.MerchantRepository;
 public class WebConfig {
 
 	@Bean
-	public FilterRegistrationBean<ApiKeyAuthFilter> apiKeyAuthFilter(MerchantRepository merchantRepository) {
+	public FilterRegistrationBean<ApiKeyAuthFilter> apiKeyAuthFilter(MerchantRepository merchantRepository,
+			org.springframework.core.env.Environment env) {
 		FilterRegistrationBean<ApiKeyAuthFilter> registration = new FilterRegistrationBean<>(
-				new ApiKeyAuthFilter(merchantRepository));
-		registration.addUrlPatterns("/api/payments/*");
+				new ApiKeyAuthFilter(merchantRepository, env.getProperty("internal.api.key")));
+		registration.addUrlPatterns("/api/payments/*", "/api/fees");
 		registration.setOrder(1);
 		return registration;
 	}

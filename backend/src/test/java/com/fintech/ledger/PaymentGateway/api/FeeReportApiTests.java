@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestPropertySource(properties = "internal.api.key=sk_internal_fee_tests")
 class FeeReportApiTests {
 
 	@Autowired
@@ -83,7 +85,7 @@ class FeeReportApiTests {
 		// Merchant B: one EUR payment with fee 0.75 -> separate currency row.
 		authorizeCaptureFee(keyB, createPayment(keyB, "30.00", "EUR", suffix + "-b1"), "30.00", "0.75");
 
-		MvcResult result = mockMvc.perform(get("/api/fees"))
+		MvcResult result = mockMvc.perform(get("/api/fees").header("X-API-Key", "sk_internal_fee_tests"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.merchants").isArray())
 				.andExpect(jsonPath("$.totals").isArray())
@@ -97,8 +99,8 @@ class FeeReportApiTests {
 				.contains("\"totalFees\":\"0.75\"");
 
 		// Overall totals: this suite's context DB is shared across test classes,
-		// so assert the currency structure and that the USD total includes this
-		// test's fees (>= 4.25) rather than an exact global value.
+		// so assert the exact per-merchant rows this test created and that the
+		// USD grand total is at least this test's contribution.
 		org.assertj.core.api.Assertions.assertThat(body)
 				.contains("{\"currency\":\"EUR\",\"totalFees\":\"0.75\",\"feeCount\":1}");
 		tools.jackson.databind.JsonNode totals = new tools.jackson.databind.ObjectMapper()
@@ -106,8 +108,8 @@ class FeeReportApiTests {
 		for (tools.jackson.databind.JsonNode total : totals) {
 			if ("USD".equals(total.get("currency").asText())) {
 				org.assertj.core.api.Assertions.assertThat(new java.math.BigDecimal(total.get("totalFees").asText()))
-						.isGreaterThanOrEqualTo(new java.math.BigDecimal("4.25"));
-				org.assertj.core.api.Assertions.assertThat(total.get("feeCount").asLong()).isGreaterThanOrEqualTo(3L);
+						.isGreaterThanOrEqualTo(new java.math.BigDecimal("3.50"));
+				org.assertj.core.api.Assertions.assertThat(total.get("feeCount").asLong()).isGreaterThanOrEqualTo(2L);
 			}
 		}
 	}

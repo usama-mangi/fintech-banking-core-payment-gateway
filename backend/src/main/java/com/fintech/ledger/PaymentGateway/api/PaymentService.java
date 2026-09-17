@@ -59,14 +59,42 @@ public class PaymentService {
 				});
 	}
 
+	/**
+	 * Detail reads are scoped: a merchant key on another merchant's payment
+	 * gets 404 - existence of other merchants' payments is not disclosed.
+	 */
 	@Transactional(readOnly = true)
-	public PaymentDtos.PaymentDetail getDetail(Long id) {
+	public PaymentDtos.PaymentDetail getDetail(Long id, Long authenticatedMerchantId, boolean internal) {
 		Payment payment = loadPayment(id);
+		if (!internal && authenticatedMerchantId != null
+				&& !payment.getMerchant().getId().equals(authenticatedMerchantId)) {
+			throw new ApiExceptions.NotFoundException("payment " + id + " not found");
+		}
 		return toDetail(payment);
 	}
 
+	/**
+	 * Listing scoped by auth tier: merchant keys are forced to their own
+	 * merchantId (a differing explicit one is a 403); the internal key may
+	 * filter by any merchant or list across all.
+	 */
 	@Transactional(readOnly = true)
-	public PageResponse<PaymentDtos.PaymentSummary> list(Long merchantId, PaymentStatus status, Pageable pageable) {
+	public PageResponse<PaymentDtos.PaymentSummary> list(Long authenticatedMerchantId, boolean internal,
+			Long requestedMerchantId, PaymentStatus status, Pageable pageable) {
+		Long merchantId;
+		if (internal) {
+			merchantId = requestedMerchantId;
+		}
+		else {
+			if (authenticatedMerchantId == null) {
+				throw new ApiExceptions.UnauthorizedException("missing or unknown API key");
+			}
+			if (requestedMerchantId != null && !requestedMerchantId.equals(authenticatedMerchantId)) {
+				throw new ApiExceptions.ForbiddenException("merchantId in query does not match the authenticated merchant");
+			}
+			merchantId = authenticatedMerchantId;
+		}
+
 		Page<Payment> page;
 		if (merchantId != null && status != null) {
 			page = paymentRepository.findByMerchantIdAndStatus(merchantId, status, pageable);
