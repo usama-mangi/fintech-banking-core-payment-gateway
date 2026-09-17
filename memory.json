@@ -22,9 +22,14 @@
       "updated": "2026-09-17T14:25:43.573810+00:00"
     },
     "boot4-package-layout": {
-      "text": "Boot 4 test annotations live in new packages: org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest, org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest. Use spring-boot-starter-webmvc-test / spring-boot-starter-data-jpa-test artifacts. Hibernate 7 auto-detects dialect; never set spring.jpa.database-platform explicitly.",
+      "text": "Boot 4 test annotations live in new packages: org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest, org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest. Use spring-boot-starter-webmvc-test / spring-boot-starter-data-jpa-test artifacts. Hibernate 7 auto-detects dialect; never set spring.jpa.database-platform explicitly.\n MockMvc auto-config annotation: org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc.",
       "cat": "fact",
-      "updated": "2026-09-17T14:25:43.653298+00:00"
+      "updated": "2026-09-17T14:30:14.746118+00:00"
+    },
+    "api-error-contract": {
+      "text": "GlobalExceptionHandler returns {status, error, message, timestamp}: 400 MethodArgumentNotValid, 404 NotFoundException, 409 DuplicateEmailException, 500 fallback (message logged, generic body). TASK-03 reuses it; only new exception types need mapping.",
+      "cat": "decision",
+      "updated": "2026-09-17T14:30:14.662508+00:00"
     }
   }
 }
