@@ -3,6 +3,8 @@ package com.fintech.ledger.PaymentGateway.api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,21 +66,21 @@ public class PaymentService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<PaymentDtos.PaymentSummary> list(Long merchantId, PaymentStatus status) {
-		List<Payment> payments;
+	public PageResponse<PaymentDtos.PaymentSummary> list(Long merchantId, PaymentStatus status, Pageable pageable) {
+		Page<Payment> page;
 		if (merchantId != null && status != null) {
-			payments = paymentRepository.findByMerchantIdAndStatus(merchantId, status);
+			page = paymentRepository.findByMerchantIdAndStatus(merchantId, status, pageable);
 		}
 		else if (merchantId != null) {
-			payments = paymentRepository.findByMerchantId(merchantId);
+			page = paymentRepository.findByMerchantId(merchantId, pageable);
 		}
 		else if (status != null) {
-			payments = paymentRepository.findByStatus(status);
+			page = paymentRepository.findByStatus(status, pageable);
 		}
 		else {
-			payments = paymentRepository.findAll();
+			page = paymentRepository.findAll(pageable);
 		}
-		return payments.stream().map(PaymentService::toSummary).toList();
+		return PageResponse.from(page, PaymentService::toSummary);
 	}
 
 	@Transactional

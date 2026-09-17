@@ -75,8 +75,8 @@ class MerchantApiTests {
 
 		mockMvc.perform(get("/api/merchants").param("status", "ACTIVE"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$").isArray())
-				.andExpect(jsonPath("$[?(@.email == 'ops@gamma-api.test')]").isNotEmpty());
+				.andExpect(jsonPath("$.content").isArray())
+				.andExpect(jsonPath("$.content[?(@.email == 'ops@gamma-api.test')]").isNotEmpty());
 	}
 
 	@Test

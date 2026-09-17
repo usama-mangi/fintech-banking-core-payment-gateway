@@ -87,8 +87,16 @@ export interface PaymentDetail extends PaymentSummary {
   transactions: Transaction[];
 }
 
-export function listMerchants(): Promise<Merchant[]> {
-  return request<Merchant[]>("/api/merchants");
+export interface Page<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export function listMerchants(): Promise<Page<Merchant>> {
+  return request<Page<Merchant>>("/api/merchants");
 }
 
 export function registerMerchant(businessName: string, email: string): Promise<Merchant> {
@@ -98,9 +106,9 @@ export function registerMerchant(businessName: string, email: string): Promise<M
   });
 }
 
-export function listPayments(status?: string): Promise<PaymentSummary[]> {
+export function listPayments(status?: string): Promise<Page<PaymentSummary>> {
   const query = status ? `?status=${encodeURIComponent(status)}` : "";
-  return request<PaymentSummary[]>(`/api/payments${query}`);
+  return request<Page<PaymentSummary>>(`/api/payments${query}`);
 }
 
 export function getPayment(id: number): Promise<PaymentDetail> {

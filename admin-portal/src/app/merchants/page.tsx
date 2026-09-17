@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 async function loadMerchants(): Promise<{ merchants: Merchant[]; error: string | null }> {
   try {
-    return { merchants: await listMerchants(), error: null };
+    return { merchants: (await listMerchants()).content, error: null };
   } catch (error) {
     if (error instanceof ApiError) {
       return { merchants: [], error: error.message };

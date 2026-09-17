@@ -1,7 +1,6 @@
 package com.fintech.ledger.PaymentGateway.api;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,10 +41,12 @@ public class PaymentController {
 	}
 
 	@GetMapping
-	public List<PaymentDtos.PaymentSummary> list(
+	public PageResponse<PaymentDtos.PaymentSummary> list(
 			@RequestParam(name = "merchantId", required = false) Long merchantId,
-			@RequestParam(name = "status", required = false) PaymentStatus status) {
-		return paymentService.list(merchantId, status);
+			@RequestParam(name = "status", required = false) PaymentStatus status,
+			@RequestParam(name = "page", required = false) Integer page,
+			@RequestParam(name = "size", required = false) Integer size) {
+		return paymentService.list(merchantId, status, PageRequests.of(page, size));
 	}
 
 	@GetMapping("/{id}")

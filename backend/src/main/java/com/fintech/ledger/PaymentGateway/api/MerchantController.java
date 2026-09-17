@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * HTTP boundary for merchants. Maps DTOs to service calls; no domain logic
@@ -37,8 +36,11 @@ public class MerchantController {
 	}
 
 	@GetMapping
-	public List<MerchantDtos.MerchantResponse> list(@RequestParam(required = false) MerchantStatusParam status) {
-		return merchantService.list(status == null ? null : status.merchantStatus());
+	public PageResponse<MerchantDtos.MerchantResponse> list(
+			@RequestParam(required = false) MerchantStatusParam status,
+			@RequestParam(name = "page", required = false) Integer page,
+			@RequestParam(name = "size", required = false) Integer size) {
+		return merchantService.list(status == null ? null : status.merchantStatus(), PageRequests.of(page, size));
 	}
 
 	/**

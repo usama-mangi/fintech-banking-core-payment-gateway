@@ -2,8 +2,8 @@ package com.fintech.ledger.PaymentGateway.api;
 
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +44,11 @@ public class MerchantService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<MerchantDtos.MerchantResponse> list(MerchantStatus status) {
-		List<Merchant> merchants = status == null ? merchantRepository.findAll() : merchantRepository.findByStatus(status);
-		return merchants.stream().map(MerchantService::toResponse).toList();
+	public PageResponse<MerchantDtos.MerchantResponse> list(MerchantStatus status, Pageable pageable) {
+		var page = status == null
+				? merchantRepository.findAll(pageable)
+				: merchantRepository.findByStatus(status, pageable);
+		return PageResponse.from(page, MerchantService::toResponse);
 	}
 
 	private String generateApiKey() {

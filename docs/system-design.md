@@ -69,14 +69,17 @@ merchant clients ─────────────────────
 REST, JSON, synchronous. Draft contracts (to be finalized in implementation tasks):
 
 ```
-POST   /api/merchants                     → 201 MerchantResponse
-GET    /api/merchants/{id}                → 200 MerchantResponse | 404
-GET    /api/payments?merchantId=&status=  → 200 [PaymentSummary]
-POST   /api/payments                      → 201 PaymentResponse (idempotent by idempotencyKey)
-GET    /api/payments/{id}                 → 200 PaymentResponse (includes transactions) | 404
-POST   /api/payments/{id}/transactions    → 201 TransactionResponse (validates transition)
-GET    /actuator/health                   → liveness for ops
+POST   /api/merchants                                   → 201 MerchantResponse
+GET    /api/merchants?status=&page=0&size=20            → 200 Page<MerchantResponse>
+GET    /api/merchants/{id}                              → 200 MerchantResponse | 404
+GET    /api/payments?merchantId=&status=&page=&size=    → 200 Page<PaymentSummary>
+POST   /api/payments                                    → 201 PaymentResponse (idempotent by idempotencyKey)
+GET    /api/payments/{id}                               → 200 PaymentResponse (includes transactions) | 404
+POST   /api/payments/{id}/transactions                  → 201 TransactionResponse (validates transition)
+GET    /actuator/health                                 → liveness for ops
 ```
+
+List endpoints return a page envelope: `{ "content": [...], "page", "size", "totalElements", "totalPages" }` — `size` clamped to 1..100, sort fixed server-side to `createdAt` descending. Element shapes are unchanged.
 
 - Errors: `{ "status", "error", "message", "timestamp" }` via a `@RestControllerAdvice`; 400 validation, 404 unknown id, 409 illegal state transition, 422 domain rule violation.
 - Idempotency: `payments.idempotency_key` unique; duplicate POST returns the original payment (200, not 201).

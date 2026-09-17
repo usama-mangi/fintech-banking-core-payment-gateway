@@ -199,13 +199,13 @@ class PaymentApiTests {
 
 		mockMvc.perform(get("/api/payments").param("status", "REQUIRES_PAYMENT").header("X-API-Key", apiKey))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[?(@.id == " + paymentId + ")]").isNotEmpty());
+				.andExpect(jsonPath("$.content[?(@.id == " + paymentId + ")]").isNotEmpty());
 
 		recordTransaction(apiKey, paymentId, "AUTHORIZATION", "100.00", status().isCreated());
 
 		mockMvc.perform(get("/api/payments").param("status", "REQUIRES_PAYMENT").header("X-API-Key", apiKey))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[?(@.id == " + paymentId + ")]").isEmpty());
+				.andExpect(jsonPath("$.content[?(@.id == " + paymentId + ")]").isEmpty());
 	}
 
 	private long createPayment(String apiKey, String idempotencyKey) throws Exception {

@@ -19,7 +19,7 @@ const STATUS_OPTIONS = [
 
 async function loadPayments(status?: string): Promise<{ payments: PaymentSummary[]; error: string | null }> {
   try {
-    return { payments: await listPayments(status), error: null };
+    return { payments: (await listPayments(status)).content, error: null };
   } catch (error) {
     if (error instanceof ApiError) {
       return { payments: [], error: error.message };

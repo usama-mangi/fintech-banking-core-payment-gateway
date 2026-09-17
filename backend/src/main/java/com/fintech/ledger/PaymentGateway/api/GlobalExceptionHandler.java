@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Shapes every error as {status, error, message, timestamp} per
@@ -58,6 +59,12 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ApiExceptions.ConflictException.class)
 	public ResponseEntity<Map<String, Object>> handleConflict(ApiExceptions.ConflictException ex) {
 		return errorBody(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+		return errorBody(HttpStatus.BAD_REQUEST,
+				"invalid value for parameter '" + ex.getName() + "': " + ex.getValue());
 	}
 
 	@ExceptionHandler(IllegalStateException.class)
