@@ -104,16 +104,91 @@
     {
       "id": "TASK-12",
       "title": "Admin portal pagination controls using the TASK-07 envelope totals",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-07"
+      ],
+      "notes": "Server-rendered prev/next over ?page=N; totals indicator; status filter composes; guards: bad param -> 0, out-of-range -> truthful indicator + one-click recovery; walkthrough verified with seeded data"
+    },
+    {
+      "id": "TASK-13",
+      "title": "Fee aggregation endpoint (totals per merchant and overall)",
+      "status": "active",
+      "dependencies": [
+        "TASK-08"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TASK-14",
+      "title": "Scoped merchant auth: merchant keys read only their own data; internal key for ops",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-04"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TASK-15",
+      "title": "CSV export of payments (GET /api/payments/export)",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-14"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "TASK-16",
+      "title": "Merchant self-service dashboard (served by backend) + finance fees view in admin portal",
+      "status": "to-do",
+      "dependencies": [
+        "TASK-13",
+        "TASK-14"
       ],
       "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T18:29:42.334029+00:00",
+    "last_updated": "2026-09-17T19:10:56.641425+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-13",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T19:10:56.641403+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-16",
+        "status": "to-do",
+        "at": "2026-09-17T19:10:14.464191+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-15",
+        "status": "to-do",
+        "at": "2026-09-17T19:10:14.258059+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-14",
+        "status": "to-do",
+        "at": "2026-09-17T19:10:14.159546+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-13",
+        "status": "to-do",
+        "at": "2026-09-17T19:10:14.060510+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-12",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T18:39:43.650604+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-12",
@@ -126,46 +201,6 @@
         "task": "TASK-12",
         "status": "to-do",
         "at": "2026-09-17T18:29:42.248192+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-11",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T18:27:34.310515+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-11",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T17:54:44.106457+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-11",
-        "status": "to-do",
-        "at": "2026-09-17T17:54:44.021549+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-10",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T17:52:27.937635+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-10",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T17:42:00.746155+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-10",
-        "status": "to-do",
-        "at": "2026-09-17T17:42:00.648135+00:00"
       }
     ]
   }
