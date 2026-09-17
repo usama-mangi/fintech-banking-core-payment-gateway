@@ -95,8 +95,9 @@ export interface Page<T> {
   totalPages: number;
 }
 
-export function listMerchants(): Promise<Page<Merchant>> {
-  return request<Page<Merchant>>("/api/merchants");
+export function listMerchants(page = 0): Promise<Page<Merchant>> {
+  const query = page > 0 ? `?page=${page}` : "";
+  return request<Page<Merchant>>(`/api/merchants${query}`);
 }
 
 export function registerMerchant(businessName: string, email: string): Promise<Merchant> {
@@ -112,8 +113,15 @@ export function transitionMerchant(id: number, action: MerchantLifecycleAction):
   return request<Merchant>(`/api/merchants/${id}/${action}`, { method: "POST" });
 }
 
-export function listPayments(status?: string): Promise<Page<PaymentSummary>> {
-  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+export function listPayments(status?: string, page = 0): Promise<Page<PaymentSummary>> {
+  const params = new URLSearchParams();
+  if (status) {
+    params.set("status", status);
+  }
+  if (page > 0) {
+    params.set("page", String(page));
+  }
+  const query = params.size > 0 ? `?${params}` : "";
   return request<Page<PaymentSummary>>(`/api/payments${query}`);
 }
 

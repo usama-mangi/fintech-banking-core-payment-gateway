@@ -29,8 +29,10 @@ existing session on restart because cookie signatures stop verifying.## Routes
 
 - `/login` — passphrase sign-in; the only page reachable without a session.
 - `/merchants` — all merchants, plus the registration form and per-row lifecycle actions
-  (suspend/reactivate/close, contextual to status). New keys appear in the table.
-- `/payments` — all payments, filterable by lifecycle status.
+  (suspend/reactivate/close, contextual to status). New keys appear in the table. Paginated
+  with `?page=N` (20 per page).
+- `/payments` — all payments, filterable by lifecycle status; the filter composes with
+  `?page=N` pagination.
 - `/payments/[id]` — one payment's chronological ledger with exact amounts and UTC
 timestamps.
 

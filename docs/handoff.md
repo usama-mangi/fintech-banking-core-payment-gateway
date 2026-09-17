@@ -18,7 +18,8 @@ Payment gateway ledger: Spring Boot 4.1.1 / Java 21 backend (Maven, `backend/`) 
 | TASK-08 FEE transactions in the ledger | closed | `a7d7233` |
 | TASK-09 portal passphrase auth + signed sessions | closed | `100ad13` |
 | TASK-10 concurrent load harness + 200ms break point | closed | `10d21a5` |
-| TASK-11 merchant lifecycle endpoints + portal actions | closed | this commit |
+| TASK-11 merchant lifecycle endpoints + portal actions | closed | `8481b4c` |
+| TASK-12 portal pagination controls from envelope totals | closed | this commit |
 
 Backlog is empty; next tasks are proposals, not commitments.
 
@@ -48,4 +49,4 @@ The portal needs `PAYMENT_API_KEY` (any ACTIVE merchant key from `GET /api/merch
 
 ## Suggested next session
 
-Orient, then consider: pagination controls in the portal (the envelope already carries totals), a fee-aggregation view on top of TASK-08, or re-testing the load break point with a larger Hikari pool (TASK-10 memory has the harness details).
+Orient, then consider: a fee-aggregation view on top of TASK-08, an audit trail for merchant lifecycle actions, or re-testing the load break point with a larger Hikari pool (TASK-10 memory has the harness details).

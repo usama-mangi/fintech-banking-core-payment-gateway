@@ -95,16 +95,45 @@
     {
       "id": "TASK-11",
       "title": "Merchant lifecycle endpoints: suspend, reactivate, close with domain transition rules",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-04"
+      ],
+      "notes": "Transitions in Merchant entity; 3 endpoints; setStatus package-private; CLOSED terminal 409; filter lockout proven E2E; portal contextual actions; NoResourceFoundException now 404; 44 tests"
+    },
+    {
+      "id": "TASK-12",
+      "title": "Admin portal pagination controls using the TASK-07 envelope totals",
+      "status": "active",
+      "dependencies": [
+        "TASK-07"
       ],
       "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T17:54:44.106476+00:00",
+    "last_updated": "2026-09-17T18:29:42.334029+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-12",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T18:29:42.334005+00:00"
+      },
+      {
+        "action": "add",
+        "task": "TASK-12",
+        "status": "to-do",
+        "at": "2026-09-17T18:29:42.248192+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-11",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T18:27:34.310515+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-11",
@@ -137,26 +166,6 @@
         "task": "TASK-10",
         "status": "to-do",
         "at": "2026-09-17T17:42:00.648135+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-09",
-        "old_status": "active",
-        "new_status": "closed",
-        "at": "2026-09-17T17:39:30.909058+00:00"
-      },
-      {
-        "action": "update",
-        "task": "TASK-09",
-        "old_status": "to-do",
-        "new_status": "active",
-        "at": "2026-09-17T17:23:51.401320+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-09",
-        "status": "to-do",
-        "at": "2026-09-17T17:23:51.318883+00:00"
       }
     ]
   }
