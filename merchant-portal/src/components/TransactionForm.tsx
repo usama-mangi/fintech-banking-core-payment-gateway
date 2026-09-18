@@ -1,0 +1,67 @@
+"use client";
+
+import { useActionState } from "react";
+import { recordTransactionAction, type FormState } from "@/app/actions";
+
+const TYPES = ["AUTHORIZATION", "CAPTURE", "REFUND", "FEE"] as const;
+
+export function TransactionForm({ paymentId, amount }: { paymentId: number; amount: string }) {
+	const [state, formAction, pending] = useActionState<FormState | null, FormData>(
+		recordTransactionAction,
+		null
+	);
+
+	return (
+		<form action={formAction} className="border border-rule bg-white p-4">
+			<h2 className="font-heading text-base font-semibold">Record a ledger entry</h2>
+			<p className="mb-4 mt-1 text-sm text-ink-muted">
+				Lifecycle order is enforced by the gateway: authorize before capture,
+				refund only a captured payment. Fees never change the payment&apos;s status.
+			</p>
+			<div className="flex flex-wrap items-end gap-3">
+				<input type="hidden" name="paymentId" value={paymentId} />
+				<label className="flex flex-col gap-1 text-sm">
+					Type
+					<select
+						name="type"
+						defaultValue="AUTHORIZATION"
+						className="min-h-[44px] border border-rule bg-white px-3 py-2 text-sm focus:border-accent focus:outline-none"
+					>
+						{TYPES.map((t) => (
+							<option key={t} value={t}>
+								{t}
+							</option>
+						))}
+					</select>
+				</label>
+				<label className="flex flex-col gap-1 text-sm">
+					Amount
+					<input
+						name="amount"
+						required
+						defaultValue={amount}
+						pattern="\d+\.\d{2}"
+						className="min-h-[44px] w-32 border border-rule bg-white px-3 py-2 font-ledger text-sm focus:border-accent focus:outline-none"
+					/>
+				</label>
+				<button
+					type="submit"
+					disabled={pending}
+					className="min-h-[44px] bg-accent px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+				>
+					{pending ? "Recording…" : "Record entry"}
+				</button>
+			</div>
+			{state?.error ? (
+				<p role="alert" className="mt-3 bg-rust-wash px-3 py-2 text-sm text-rust">
+					{state.error}
+				</p>
+			) : null}
+			{state?.ok ? (
+				<p role="status" className="mt-3 bg-accent-wash px-3 py-2 text-sm text-accent">
+					Entry recorded.
+				</p>
+			) : null}
+		</form>
+	);
+}

@@ -146,11 +146,24 @@
         "TASK-14"
       ],
       "notes": ""
+    },
+    {
+      "id": "TASK-17",
+      "title": "Merchant portal: standalone Next.js app consuming the gateway API with API-key auth",
+      "status": "to-do",
+      "dependencies": [],
+      "notes": ""
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T19:38:00.898390+00:00",
+    "last_updated": "2026-09-18T09:13:43.960709+00:00",
     "recent_changes": [
+      {
+        "action": "add",
+        "task": "TASK-17",
+        "status": "to-do",
+        "at": "2026-09-18T09:13:43.960691+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-16",
@@ -199,12 +212,6 @@
         "old_status": "to-do",
         "new_status": "active",
         "at": "2026-09-17T19:10:56.641403+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-16",
-        "status": "to-do",
-        "at": "2026-09-17T19:10:14.464191+00:00"
       }
     ]
   }
