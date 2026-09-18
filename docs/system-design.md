@@ -12,7 +12,7 @@
   5. Record processing fees against a payment with an authorization (AUTHORIZED, CAPTURED or REFUNDED); fees never move the payment's status and are excluded from captured totals.
   6. Admin manages merchant standing: suspend (ACTIVE → SUSPENDED), reactivate (SUSPENDED → ACTIVE), close (any non-terminal status → CLOSED, terminal); the domain owns the transition table and the API-key filter locks non-ACTIVE merchants out of the payment API immediately.
   7. Admin traces a payment: full chronological transaction list with statuses.
-  8. Merchant self-service dashboard: a merchant signs in with their API key at `/dashboard` and sees only their own payments with captured/refunded totals (server-rendered Thymeleaf; the key moves to a short-lived httpOnly cookie and is never rendered).
+  8. Merchant self-service surfaces: (a) the backend's server-rendered `/dashboard` (Thymeleaf, API-key cookie) and (b) the merchant portal (`merchant-portal/`, Next.js) — a full merchant app: sign in with the API key, create payments (server-minted idempotency key), drive the lifecycle (authorize/capture/refund/fee), and see only their own ledger. Portal sessions are self-contained AES-256-GCM sealed cookies signed with `MERCHANT_SESSION_SECRET`; the raw key never reaches the browser.
   9. CSV export: internal consumers page through all payments as `text/csv` at `/api/payments/export` (RFC 4180 quoting, same scoping as the list endpoint).
 - Inputs: JSON over REST. Outputs: JSON payment/merchant/transaction resources with status codes.
 - Operations: create/read + lifecycle transitions on merchants; create/read + ledger-record on payments; list/search by merchant and status.
@@ -83,6 +83,7 @@ POST   /api/payments/{id}/transactions                  → 201 TransactionRespo
 GET    /api/fees                                        → 200 FeeReport (internal key only)
 GET    /api/payments/export                             → 200 text/csv (internal key; merchant key = own rows)
 GET    /dashboard                                       → 200 HTML merchant self-service (API-key sign-in)
+POST   /api/sign-in (portal)                            → 307 merchant-portal sign-in (seals API key into session cookie)
 GET    /actuator/health                                 → liveness for ops
 ```
 
@@ -113,4 +114,4 @@ List endpoints return a page envelope: `{ "content": [...], "page", "size", "tot
 
 ## 7. Decision
 
-Monolithic Spring Boot 4 API + Next.js admin portal, H2 dev / PostgreSQL prod, static API-key auth, domain-owned status transitions, append-only ledger. Revisit triggers: > 50 QPS sustained, multi-team ownership, external partner access requiring OAuth, or Postgres schema divergence from H2 tests.
+Monolithic Spring Boot 4 API + Next.js admin portal + Next.js merchant portal, H2 dev / PostgreSQL prod, static API-key auth, domain-owned status transitions, append-only ledger. Revisit triggers: > 50 QPS sustained, multi-team ownership, external partner access requiring OAuth, or Postgres schema divergence from H2 tests.

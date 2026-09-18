@@ -24,6 +24,7 @@ Payment gateway ledger: Spring Boot 4.1.1 / Java 21 backend (Maven, `backend/`) 
 | TASK-14 scoped auth: internal key tier + ownership scoping | closed | this commit |
 | TASK-15 CSV export `/api/payments/export` | closed | this commit |
 | TASK-16 merchant dashboard (Thymeleaf) + portal `/fees` view | closed | this commit |
+| TASK-17 merchant portal (standalone Next.js, API-key sign-in) | closed | `a35f100` + `07dc287` |
 
 Backlog is empty; next tasks are proposals, not commitments.
 
@@ -32,6 +33,7 @@ Backlog is empty; next tasks are proposals, not commitments.
 ```bash
 cd backend  && ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"   # :8080
 cd admin-portal && PAYMENT_API_KEY=sk_... PORTAL_PASSCODE=... npm run dev                          # :3000
+cd merchant-portal && MERCHANT_SESSION_SECRET=... npm run dev                                      # :3200
 cd backend  && ./mvnw test                          # 56 tests
 cd backend  && ./mvnw -q -Pbenchmark exec:java      # latency baseline -> benchmarks/results/
 ```
