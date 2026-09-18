@@ -50,6 +50,36 @@
       "text": "Boot 4 test stack: TestRestTemplate lives in org.springframework.boot.resttestclient (artifact spring-boot-resttestclient, inside starter-webmvc-test); enable with @AutoConfigureTestRestTemplate on RANDOM_PORT tests, plus test-scope spring-boot-restclient for RestTemplateBuilder. Benchmark harness: ./mvnw -q -Pbenchmark exec:java writes benchmarks/results/baseline-<date>.{md,json}; lifecycle forbids double-authorize so warmup+measured auth calls each need a fresh payment.",
       "cat": "fact",
       "updated": "2026-09-17T15:47:24.027702+00:00"
+    },
+    "pagination": {
+      "text": "TASK-07: list endpoints return PageResponse<T> envelope; PageRequests.of() is the single validated factory (1..100, createdAt DESC, server-fixed sort); MethodArgumentTypeMismatchException mapped to 400; servlet filter auth runs before controller validation so list-endpoint validation tests need a real key; admin portal consumes via Page<T> in lib/api.ts",
+      "cat": "",
+      "updated": "2026-09-17T17:15:21.674967+00:00"
+    },
+    "fee-transactions": {
+      "text": "TASK-08: Payment.record() accepts FEE only in AUTHORIZED/CAPTURED/REFUNDED (409 otherwise), fee <= payment.amount (compareTo, boundary allowed), status never changes, capturedAmountInUsd still excludes fees (sign 0). Multiple fees allowed. All five TransactionType values now have explicit branches in record().",
+      "cat": "",
+      "updated": "2026-09-17T17:19:43.859025+00:00"
+    },
+    "portal-auth": {
+      "text": "TASK-09: portal staff views gated by PORTAL_PASSCODE (server-only env); session = HMAC-signed cookie ledger_session (expiry.hmac, key = HMAC-SHA256(passphrase, 'ledger-portal-session-v1'), 12h, timing-safe, fails closed when unset, rotation kills all sessions); guard lives in app/(staff)/layout.tsx using x-portal-path header set by src/middleware.ts (login excluded from matcher); logout is POST /logout route handler (303 to /login); cookie survives portal restarts (stateless) but NOT backend restarts that rotate PAYMENT_API_KEY; Next 15 server actions cannot set cookies then redirect in try/catch - redirect() throws by design",
+      "cat": "",
+      "updated": "2026-09-17T17:39:45.719722+00:00"
+    },
+    "load-benchmark": {
+      "text": "TASK-10: LoadBenchmark (profile benchmark-load) = closed-loop worker pools at 1/4/16/64/128/256, 40 warmup + 240 measured per (scenario,level); scenarios CREATE, RECORD_AUTHORIZATION (fresh pre-seeded payments - lifecycle forbids double-authz), GET_DETAIL, LIST_PAYMENTS, MIXED (50/25/15/10). Measured on H2+Hikari defaults: writes break 200ms p99 between 16-64 workers (connection-pool queueing: 362/481ms at 64), LIST breaks at 64 (232ms), GET_DETAIL survives to 256 (149ms), MIXED survives to 256 (195ms). First lever if write bursts matter: hikari maximum-pool-size + verify PostgreSQL parity, not app code. Client needs http.maxConnections=300 or JDK keep-alive pool (default 5) fakes a bottleneck.",
+      "cat": "",
+      "updated": "2026-09-17T17:52:37.994955+00:00"
+    },
+    "merchant-lifecycle": {
+      "text": "TASK-11: Merchant owns its lifecycle (activate PENDING->ACTIVE domain-only, suspend ACTIVE->SUSPENDED, reactivate SUSPENDED->ACTIVE, close any-non-terminal->CLOSED terminal); public setStatus removed (package-private for JPA), so tests reach non-ACTIVE states via transitions. Endpoints POST /api/merchants/{id}/suspend|reactivate|close; illegal transition -> IllegalStateException -> 409. ApiKeyAuthFilter already 403s non-ACTIVE keys ('merchant is suspended'), so suspends bite immediately. Registration creates ACTIVE directly, so PENDING is API-unreachable by design. Portal: merchantLifecycleAction server action + MerchantActions.tsx contextual buttons (CLOSED renders no actions). Ops gotchas learned: npm run build while next dev is running clobbers .next and breaks hydration (server actions then submit as native GETs); a running backend started before new endpoints exist answers NoResourceFoundException -> was 500, now mapped to 404.",
+      "cat": "",
+      "updated": "2026-09-17T18:27:45.701873+00:00"
+    },
+    "portal-pagination": {
+      "text": "TASK-12: Pagination.tsx is a server component driven purely by the envelope (page/totalPages/totalElements) + hrefFor callback; URL-driven ?page=N, no client state, works without JS. parsePageParam in lib/params.ts degrades bad input to 0. Out-of-range pages are NOT redirected: render the truthful indicator (Page N of M with N>M) and Previous targets min(page-1, totalPages-1) so recovery is one click; empty-state text only when totalElements==0 (empty states must not lie - design rule). Payments hrefs preserve the status filter. Ops: stop next dev before npm run build (shared .next)",
+      "cat": "",
+      "updated": "2026-09-17T18:39:51.265313+00:00"
     }
   }
 }

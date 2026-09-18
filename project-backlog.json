@@ -131,16 +131,16 @@
     {
       "id": "TASK-15",
       "title": "CSV export of payments (GET /api/payments/export)",
-      "status": "active",
+      "status": "closed",
       "dependencies": [
         "TASK-14"
       ],
-      "notes": ""
+      "notes": "GET /api/payments/export text/csv; 500-row chunks; RFC4180 escaping; scoped like list; 52 tests"
     },
     {
       "id": "TASK-16",
       "title": "Merchant self-service dashboard (served by backend) + finance fees view in admin portal",
-      "status": "to-do",
+      "status": "active",
       "dependencies": [
         "TASK-13",
         "TASK-14"
@@ -149,8 +149,22 @@
     }
   ],
   "log": {
-    "last_updated": "2026-09-17T19:29:07.631242+00:00",
+    "last_updated": "2026-09-17T19:38:00.898390+00:00",
     "recent_changes": [
+      {
+        "action": "update",
+        "task": "TASK-16",
+        "old_status": "to-do",
+        "new_status": "active",
+        "at": "2026-09-17T19:38:00.898373+00:00"
+      },
+      {
+        "action": "update",
+        "task": "TASK-15",
+        "old_status": "active",
+        "new_status": "closed",
+        "at": "2026-09-17T19:38:00.811786+00:00"
+      },
       {
         "action": "update",
         "task": "TASK-15",
@@ -191,18 +205,6 @@
         "task": "TASK-16",
         "status": "to-do",
         "at": "2026-09-17T19:10:14.464191+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-15",
-        "status": "to-do",
-        "at": "2026-09-17T19:10:14.258059+00:00"
-      },
-      {
-        "action": "add",
-        "task": "TASK-14",
-        "status": "to-do",
-        "at": "2026-09-17T19:10:14.159546+00:00"
       }
     ]
   }
