@@ -6,58 +6,23 @@ import { revalidatePath } from "next/cache";
 import {
 	createPayment,
 	recordTransaction,
-	listPayments,
 	ApiError,
 	type TransactionType,
 } from "@/lib/api";
-import { SESSION_COOKIE, SESSION_TTL_SECONDS, sessionCookie, signSession } from "@/lib/session";
+import { SESSION_COOKIE, sessionCookie, verifySession } from "@/lib/session";
 
 export interface FormState {
 	error?: string;
 	ok?: boolean;
 }
 
-/** Only same-origin absolute paths may serve as a post-login target. */
-function safeRedirectTarget(raw: string | null | undefined): string {
-	return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/";
-}
-
 async function requireKey(): Promise<string> {
 	const store = await cookies();
-	const token = store.get(SESSION_COOKIE)?.value;
-	const { verifySession } = await import("@/lib/session");
-	const session = verifySession(token);
+	const session = verifySession(store.get(SESSION_COOKIE)?.value);
 	if (!session) {
 		redirect("/login");
 	}
 	return session.apiKey;
-}
-
-export async function signInAction(_prev: FormState | null, formData: FormData): Promise<FormState> {
-	const apiKey = String(formData.get("apiKey") ?? "").trim();
-	const target = safeRedirectTarget(String(formData.get("next") ?? ""));
-
-	if (!apiKey) {
-		return { error: "Enter the API key issued when your business registered." };
-	}
-
-	try {
-		// Key validity probe: the gateway accepts the key (ownership rules
-		// scope everything it returns to this merchant).
-		await listPayments(apiKey, undefined, 0);
-	} catch (error) {
-		if (error instanceof ApiError && error.status === 401) {
-			return { error: "That API key was not recognized. Check it and try again." };
-		}
-		if (error instanceof ApiError && error.status === 403) {
-			return { error: "This key is locked out — your merchant account is suspended or closed." };
-		}
-		return { error: "Could not reach the gateway API. Is the backend running?" };
-	}
-
-	const store = await cookies();
-	store.set(SESSION_COOKIE, signSession(apiKey), sessionCookie(SESSION_TTL_SECONDS));
-	redirect(target);
 }
 
 export async function signOutAction(): Promise<void> {

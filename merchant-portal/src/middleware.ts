@@ -1,13 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE, isPlausiblyAuthenticated } from "@/lib/session-edge";
+import { SESSION_COOKIE } from "@/lib/session-edge";
 
 /**
  * The sign-in gate: any page request without a plausibly valid session is
  * redirected to /login, preserving the path so sign-in can return to it.
- * Full verification (with the key vault) happens again in the layout.
+ * Full authentication (AES-GCM unseal + expiry) happens in the layout.
  */
-export async function middleware(request: NextRequest) {
-	const plausible = await isPlausiblyAuthenticated(request.cookies.get(SESSION_COOKIE)?.value);
+export function middleware(request: NextRequest) {
+	// Shape-only gate: a well-formed sealed token is `iv.ciphertext.tag`
+	// (three base64url parts). The real authentication (AES-GCM unseal +
+	// expiry check) happens in the layout — middleware only avoids rendering
+	// pages for requests with no session-shaped cookie at all.
+	const token = request.cookies.get(SESSION_COOKIE)?.value;
+	const plausible = (token?.split(".") ?? []).length === 3;
 	if (!plausible) {
 		const loginUrl = new URL("/login", request.url);
 		loginUrl.searchParams.set("next", request.nextUrl.pathname);
@@ -20,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/((?!_next/static|_next/image|favicon.ico|login|cookie-smoke).*)"],
+	matcher: ["/((?!_next/static|_next/image|favicon.ico|login|api/sign-in).*)"],
 };

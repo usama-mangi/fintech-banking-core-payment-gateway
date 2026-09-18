@@ -1,14 +1,13 @@
 /**
- * Merchant session: the merchant's API key mints an HMAC-signed, expiring
- * cookie. The raw key is NOT stored in the cookie — only a signature over
- * its hash — so a stolen cookie does not leak the key. Verification recomputes
- * the signature; the key itself lives server-side in a companion store.
+ * Merchant session: the merchant's API key is sealed (AES-256-GCM) into a
+ * self-contained, expiring cookie keyed to MERCHANT_SESSION_SECRET. The raw
+ * key never appears in the cookie or the browser; any server instance holding
+ * the secret can unseal it — no shared vault, works across processes.
  *
- * Cookie design: `<expiryMs>.<keyHash-b64url>.<hmac(expiryMs.keyHash)>` where
- * keyHash = sha256(key). The in-process key vault maps keyHash -> key so API
- * calls can authenticate without the key ever crossing to the browser.
+ * Cookie design: `<iv-b64url>.<ciphertext-b64url>.<tag-b64url>` where the
+ * plaintext is `<expiryMs>:<apiKey>` and the AAD binds the cookie name.
  */
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 export { SESSION_COOKIE } from "./session-edge";
@@ -16,37 +15,62 @@ import { SESSION_COOKIE } from "./session-edge";
 
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 export const SESSION_TTL_SECONDS = SESSION_TTL_MS / 1000;
-const SESSION_KEY_CONTEXT = "merchant-portal-session-v1";
 
-/** Server-side vault: keyHash -> raw key. Survives for the process lifetime;
- * a restart simply asks merchants to sign in again. */
-const keyVault = new Map<string, string>();
-
-/** MUST match session-edge.ts's key material: the same logical HMAC key on
- * both runtimes. Edge can't do HKDF-style double hashing cheaply, so both
- * sides sign with the bytes of this literal string. */
 function sessionKey(): Buffer {
 	const secret = process.env.MERCHANT_SESSION_SECRET ?? "merchant-portal-dev-secret";
-	return Buffer.from(`merchant-portal-session-v1:${secret}`, "utf8");
-}
-
-export function keyHashOf(apiKey: string): string {
-	return createHash("sha256").update(apiKey).digest("base64url");
-}
-
-/** A signed session token binding the expiry to this key's hash. */
-export function signSession(apiKey: string): string {
-	const keyHash = keyHashOf(apiKey);
-	keyVault.set(keyHash, apiKey);
-	const expiresAt = Date.now() + SESSION_TTL_MS;
-	const digest = createHmac("sha256", sessionKey())
-		.update(`${expiresAt}.${keyHash}`)
-		.digest("base64url");
-	return `${expiresAt}.${keyHash}.${digest}`;
+	return createHash("sha256")
+		.update(`merchant-portal-session-v1:${secret}`, "utf8")
+		.digest();
 }
 
 export interface MerchantSession {
 	apiKey: string;
+}
+
+/** Seals the API key into a self-contained, expiring session token. */
+export function signSession(apiKey: string): string {
+	const iv = randomBytes(12);
+	const cipher = createCipheriv("aes-256-gcm", sessionKey(), iv, { authTagLength: 16 });
+	cipher.setAAD(Buffer.from(SESSION_COOKIE));
+	const expiresAt = Date.now() + SESSION_TTL_MS;
+	const ciphertext = Buffer.concat([
+		cipher.update(`${expiresAt}:${apiKey}`, "utf8"),
+		cipher.final(),
+	]);
+	const tag = cipher.getAuthTag();
+	return [
+		iv.toString("base64url"),
+		ciphertext.toString("base64url"),
+		tag.toString("base64url"),
+	].join(".");
+}
+
+function unsealSession(token: string): MerchantSession | null {
+	const parts = token.split(".");
+	if (parts.length !== 3) {
+		return null;
+	}
+	try {
+		const iv = Buffer.from(parts[0], "base64url");
+		const ciphertext = Buffer.from(parts[1], "base64url");
+		const tag = Buffer.from(parts[2], "base64url");
+		const decipher = createDecipheriv("aes-256-gcm", sessionKey(), iv, { authTagLength: 16 });
+		decipher.setAAD(Buffer.from(SESSION_COOKIE));
+		decipher.setAuthTag(tag);
+		const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString("utf8");
+		const sep = plaintext.indexOf(":");
+		if (sep < 0) {
+			return null;
+		}
+		const expiresAt = Number(plaintext.slice(0, sep));
+		if (!Number.isSafeInteger(expiresAt) || expiresAt <= Date.now()) {
+			return null;
+		}
+		const apiKey = plaintext.slice(sep + 1);
+		return apiKey ? { apiKey } : null;
+	} catch {
+		return null;
+	}
 }
 
 /** Verifies the token and returns the merchant's key, or null. */
@@ -54,26 +78,16 @@ export function verifySession(token: string | undefined): MerchantSession | null
 	if (!token) {
 		return null;
 	}
-	const parts = token.split(".");
-	if (parts.length !== 3) {
+	const session = unsealSession(token);
+	if (!session) {
 		return null;
 	}
-	const [expiryPart, keyHash, digest] = parts;
-	const expiresAt = Number(expiryPart);
-	if (!Number.isSafeInteger(expiresAt) || expiresAt <= Date.now()) {
-		keyVault.delete(keyHash);
-		return null;
-	}
-	const expected = createHmac("sha256", sessionKey())
-		.update(`${expiryPart}.${keyHash}`)
-		.digest("base64url");
-	const given = Buffer.from(digest);
-	const check = Buffer.from(expected);
-	if (given.length !== check.length || !timingSafeEqual(given, check)) {
-		return null;
-	}
-	const apiKey = keyVault.get(keyHash);
-	return apiKey ? { apiKey } : null;
+	// Constant-time no-op on the key so timing is uniform with the previous
+	// comparison-based implementation; correctness comes from GCM's tag.
+	const check = Buffer.from(session.apiKey);
+	const expected = Buffer.from(session.apiKey);
+	timingSafeEqual(check, expected);
+	return session;
 }
 
 export function sessionCookie(maxAgeSeconds?: number): {
